@@ -21,21 +21,24 @@
             "translation": "HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.page_title",
             "icon": "fa-circle-o",
             "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_list",
-            "priority": 10
+            "priority": 10,
+            "parent": "admin.routes.e.commerce.warehouses.stock.history.index"
         },
         {
             "route": "admin.routes.e.commerce.warehouses.stock.history.index",
             "translation": "HCECommerceWarehouse::e_commerce_warehouses_stock_history.page_title",
             "icon": "fa-circle-o",
             "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_list",
-            "priority": 10
+            "priority": 10,
+            "parent": "admin.routes.e.commerce.warehouses.index"
         },
         {
             "route": "admin.routes.e.commerce.warehouses.stock.summary.index",
             "translation": "HCECommerceWarehouse::e_commerce_warehouses_stock_summary.page_title",
             "icon": "fa-circle-o",
             "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_list",
-            "priority": 10
+            "priority": 10,
+            "parent": "admin.routes.e.commerce.warehouses.index"
         }
     ],
     "acl": {
