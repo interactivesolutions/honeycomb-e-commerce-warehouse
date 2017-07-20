@@ -5,7 +5,8 @@
     "formData": {
         "e-commerce-warehouses": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\HCECWarehousesForm",
         "e-commerce-warehouses-stock-history-actions": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\warehouses\\stock\\HCECStockHistoryActionsForm",
-        "e-commerce-warehouses-stock-history": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\warehouses\\stock\\HCECStockHistoryForm"
+        "e-commerce-warehouses-stock-history": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\warehouses\\stock\\HCECStockHistoryForm",
+        "e-commerce-warehouses-stock-summary": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\warehouses\\stock\\HCECStockSummaryForm"
     },
     "adminMenu": [
         {
@@ -27,6 +28,13 @@
             "translation": "HCECommerceWarehouse::e_commerce_warehouses_stock_history.page_title",
             "icon": "fa-circle-o",
             "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_list",
+            "priority": 10
+        },
+        {
+            "route": "admin.routes.e.commerce.warehouses.stock.summary.index",
+            "translation": "HCECommerceWarehouse::e_commerce_warehouses_stock_summary.page_title",
+            "icon": "fa-circle-o",
+            "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_list",
             "priority": 10
         }
     ],
@@ -64,6 +72,17 @@
                     "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete",
                     "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_force_delete"
                 ]
+            },
+            {
+                "name": "admin.routes.e.commerce.warehouses.stock.summary",
+                "controller": "interactivesolutions\\honeycombecommercewarehouse\\app\\http\\controllers\\ecommerce\\warehouses\\stock\\HCECStockSummaryController",
+                "actions": [
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_list",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_create",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_update",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_delete",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_force_delete"
+                ]
             }
         ],
         "rolesActions": {
@@ -79,7 +98,11 @@
                 "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_list",
                 "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create",
                 "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update",
-                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete"
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_list",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_create",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_update",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_summary_delete"
             ]
         }
     }
