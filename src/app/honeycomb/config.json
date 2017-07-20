@@ -1,21 +1,40 @@
 {
-    "general":
-    {
+    "general": {
         "serviceProviderNameSpace": "HCECommerceWarehouse"
     },
-    "formData":
-    [
+    "formData": {
+        "e-commerce-warehouses": "interactivesolutions\\honeycombecommercewarehouse\\app\\forms\\ecommerce\\HCECWarehousesForm"
+    },
+    "adminMenu": [
+        {
+            "route": "admin.routes.e.commerce.warehouses.index",
+            "translation": "HCECommerceWarehouse::e_commerce_warehouses.page_title",
+            "icon": "fa-circle-o",
+            "aclPermission": "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_list",
+            "priority": 10
+        }
     ],
-    "adminMenu":
-    [
-    ],
-    "acl":
-    {
-        "permissions" :
-        [
+    "acl": {
+        "permissions": [
+            {
+                "name": "admin.routes.e.commerce.warehouses",
+                "controller": "interactivesolutions\\honeycombecommercewarehouse\\app\\http\\controllers\\ecommerce\\HCECWarehousesController",
+                "actions": [
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_list",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_create",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_update",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_delete",
+                    "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_force_delete"
+                ]
+            }
         ],
-        "rolesActions" :
-        [
-        ]
+        "rolesActions": {
+            "project-admin": [
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_list",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_create",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_update",
+                "interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_delete"
+            ]
+        }
     }
 }
