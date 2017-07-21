@@ -95,6 +95,7 @@ class HCECWarehousesController extends HCBaseController
         $data = $this->getInputData();
 
         $record = HCECWarehouses::create(array_get($data, 'record'));
+        $record->updateUsers(array_get($data, 'users', []));
 
         return $this->apiShow($record->id);
     }
@@ -112,6 +113,7 @@ class HCECWarehousesController extends HCBaseController
         $data = $this->getInputData();
 
         $record->update(array_get($data, 'record', []));
+        $record->updateUsers(array_get($data, 'users', []));
 
         return $this->apiShow($record->id);
     }
@@ -240,6 +242,8 @@ class HCECWarehousesController extends HCBaseController
         array_set($data, 'record.address', array_get($_data, 'address'));
         array_set($data, 'record.country_id', array_get($_data, 'country_id'));
 
+        array_set($data, 'users', array_get($_data, 'users'));
+
         return $data;
     }
 
@@ -251,7 +255,7 @@ class HCECWarehousesController extends HCBaseController
      */
     public function apiShow(string $id)
     {
-        $with = [];
+        $with = ['users'];
 
         $select = HCECWarehouses::getFillableFields();
 

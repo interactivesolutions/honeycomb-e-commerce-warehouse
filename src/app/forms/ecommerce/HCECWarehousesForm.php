@@ -2,6 +2,7 @@
 
 namespace interactivesolutions\honeycombecommercewarehouse\app\forms\ecommerce;
 
+use interactivesolutions\honeycombacl\app\models\HCUsers;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\HCECWarehouses;
 use interactivesolutions\honeycombregions\app\models\regions\HCCountries;
 
@@ -31,6 +32,19 @@ class HCECWarehousesForm
                 ],
             ],
             'structure'  => [
+                [
+                    "type"            => "dropDownList",
+                    "fieldID"         => "users",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses.users"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                    "options"         => HCUsers::select('id', 'email')->get(),
+                    "search"          => [
+                        "maximumSelectionLength" => 10,
+                        "minimumSelectionLength" => 0,
+                        "showNodes"              => ["email"],
+                    ],
+                ],
                 [
                     "type"            => "singleLine",
                     "fieldID"         => "reference",
