@@ -8,4 +8,7 @@ return [
     'amount'       => 'Amount',
     'prime_cost'   => 'Prime cost',
 
+    'errors' => [
+        'left_goods' => 'You don\'t have enough usable quantity. Cannot remove :q items out of :left.',
+    ],
 ];

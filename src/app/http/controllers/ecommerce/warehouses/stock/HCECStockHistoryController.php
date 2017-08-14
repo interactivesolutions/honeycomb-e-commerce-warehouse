@@ -5,6 +5,8 @@ namespace interactivesolutions\honeycombecommercewarehouse\app\http\controllers\
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistory;
+use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
+use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockSummary;
 use interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock\HCECStockHistoryValidator;
 
 class HCECStockHistoryController extends HCBaseController
@@ -53,27 +55,27 @@ class HCECStockHistoryController extends HCBaseController
     public function getAdminListHeader()
     {
         return [
-            'good.translations.{lang}.label'      => [
+            'good.translations.{lang}.label'  => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.good_id'),
             ],
-            'warehouse.name' => [
+            'warehouse.name'                  => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.warehouse_id'),
             ],
-            'action.translations.{lang}.name'    => [
+            'action.translations.{lang}.name' => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
             ],
-            'user.email'      => [
+            'user.email'                      => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.user_id'),
             ],
-            'amount'       => [
+            'amount'                          => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.amount'),
             ],
-            'prime_cost'   => [
+            'prime_cost'                      => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost'),
             ],
@@ -91,6 +93,8 @@ class HCECStockHistoryController extends HCBaseController
         $data = $this->getInputData();
 
         $record = HCECStockHistory::create(array_get($data, 'record'));
+
+        $this->updateStockSummary($data, $record);
 
         return $this->apiShow($record->id);
     }
@@ -267,5 +271,49 @@ class HCECStockHistoryController extends HCBaseController
         $filters = [];
 
         return $filters;
+    }
+
+    /**
+     * @param $data
+     * @param $record
+     * @throws \Exception
+     */
+    protected function updateStockSummary($data, $record)
+    {
+        $record->load('action');
+
+        $summary = HCECStockSummary::where(['good_id' => $data['record']['good_id'], 'warehouse_id' => $data['record']['warehouse_id']])->first();
+
+        $sign = $record->action->sign;
+
+        if( is_null($summary) ) {
+
+            if( $sign == '-1' ) {
+                throw new \Exception('Can\'t decrease items from not existing quantity in stock summary for this product');
+            }
+
+            HCECStockSummary::create([
+                'good_id'            => $data['record']['good_id'],
+                'warehouse_id'       => $data['record']['warehouse_id'],
+                'ordered'            => 0,
+                'in_transit'         => 0,
+                'on_sale'            => 0,
+                'reserved'           => 0,
+                'ready_for_shipment' => 0,
+                'total'              => $data['record']['amount'],
+            ]);
+
+        } else {
+
+            $total = $summary->total - $data['record']['amount'];
+
+            if( $total < 0 ) {
+                throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.errors.left_goods', ['q' => $data['record']['amount'], 'left' => $summary->total]));
+            }
+
+            // update total
+            $summary->total = $total;
+            $summary->save();
+        }
     }
 }
