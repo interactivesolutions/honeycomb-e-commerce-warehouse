@@ -1,11 +1,11 @@
 <?php
-    return [
-        'page_title' => 'HCECStockHistory',
-'good_id' => 'Good id',
-'warehouse_id' => 'Warehouse id',
-'action_id' => 'Action id',
-'user_id' => 'User id',
-'amount' => 'Amount',
-'prime_cost' => 'Prime cost',
+return [
+    'page_title'   => 'StockHistory',
+    'good_id'      => 'Good',
+    'warehouse_id' => 'Warehouse',
+    'action_id'    => 'Action',
+    'user_id'      => 'User',
+    'amount'       => 'Amount',
+    'prime_cost'   => 'Prime cost',
 
-    ];
+];

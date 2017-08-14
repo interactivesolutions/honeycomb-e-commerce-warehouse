@@ -28,20 +28,19 @@ class HCECStockHistoryController extends HCBaseController
             'headers'     => $this->getAdminListHeader(),
         ];
 
-        if (auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create'))
+        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create') )
             $config['actions'][] = 'new';
 
-        if (auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update'))
-        {
+        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update') ) {
             $config['actions'][] = 'update';
             $config['actions'][] = 'restore';
         }
 
-        if (auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete'))
+        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete') )
             $config['actions'][] = 'delete';
 
         $config['actions'][] = 'search';
-        $config['filters'] = $this->getFilters ();
+        $config['filters'] = $this->getFilters();
 
         return hcview('HCCoreUI::admin.content.list', ['config' => $config]);
     }
@@ -54,39 +53,39 @@ class HCECStockHistoryController extends HCBaseController
     public function getAdminListHeader()
     {
         return [
-            'good_id'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.good_id'),
-],
-'warehouse_id'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.warehouse_id'),
-],
-'action_id'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
-],
-'user_id'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.user_id'),
-],
-'amount'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.amount'),
-],
-'prime_cost'     => [
-    "type"  => "text",
-    "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost'),
-],
+            'good.translations.{lang}.label'      => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.good_id'),
+            ],
+            'warehouse.name' => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.warehouse_id'),
+            ],
+            'action.translations.{lang}.name'    => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
+            ],
+            'user.email'      => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.user_id'),
+            ],
+            'amount'       => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.amount'),
+            ],
+            'prime_cost'   => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost'),
+            ],
 
         ];
     }
 
     /**
-    * Create item
-    *
-    * @return mixed
-    */
+     * Create item
+     *
+     * @return mixed
+     */
     protected function __apiStore()
     {
         $data = $this->getInputData();
@@ -97,11 +96,11 @@ class HCECStockHistoryController extends HCBaseController
     }
 
     /**
-    * Updates existing item based on ID
-    *
-    * @param $id
-    * @return mixed
-    */
+     * Updates existing item based on ID
+     *
+     * @param $id
+     * @return mixed
+     */
     protected function __apiUpdate(string $id)
     {
         $record = HCECStockHistory::findOrFail($id);
@@ -114,11 +113,11 @@ class HCECStockHistoryController extends HCBaseController
     }
 
     /**
-    * Updates existing specific items based on ID
-    *
-    * @param string $id
-    * @return mixed
-    */
+     * Updates existing specific items based on ID
+     *
+     * @param string $id
+     * @return mixed
+     */
     protected function __apiUpdateStrict(string $id)
     {
         HCECStockHistory::where('id', $id)->update(request()->all());
@@ -127,11 +126,11 @@ class HCECStockHistoryController extends HCBaseController
     }
 
     /**
-    * Delete records table
-    *
-    * @param $list
-    * @return mixed
-    */
+     * Delete records table
+     *
+     * @param $list
+     * @return mixed
+     */
     protected function __apiDestroy(array $list)
     {
         HCECStockHistory::destroy($list);
@@ -140,11 +139,11 @@ class HCECStockHistoryController extends HCBaseController
     }
 
     /**
-    * Delete records table
-    *
-    * @param $list
-    * @return mixed
-    */
+     * Delete records table
+     *
+     * @param $list
+     * @return mixed
+     */
     protected function __apiForceDelete(array $list)
     {
         HCECStockHistory::onlyTrashed()->whereIn('id', $list)->forceDelete();
@@ -153,11 +152,11 @@ class HCECStockHistoryController extends HCBaseController
     }
 
     /**
-    * Restore multiple records
-    *
-    * @param $list
-    * @return mixed
-    */
+     * Restore multiple records
+     *
+     * @param $list
+     * @return mixed
+     */
     protected function __apiRestore(array $list)
     {
         HCECStockHistory::whereIn('id', $list)->restore();
@@ -173,16 +172,16 @@ class HCECStockHistoryController extends HCBaseController
      */
     protected function createQuery(array $select = null)
     {
-        $with = [];
+        $with = ['good.translations', 'warehouse', 'action.translations', 'user'];
 
-        if ($select == null)
+        if( $select == null )
             $select = HCECStockHistory::getFillableFields();
 
         $list = HCECStockHistory::with($with)->select($select)
-        // add filters
-        ->where(function ($query) use ($select) {
-            $query = $this->getRequestParameters($query, $select);
-        });
+            // add filters
+            ->where(function ($query) use ($select) {
+                $query = $this->getRequestParameters($query, $select);
+            });
 
         // enabling check for deleted
         $list = $this->checkForDeleted($list);
@@ -204,15 +203,14 @@ class HCECStockHistoryController extends HCBaseController
      */
     protected function searchQuery(Builder $query, string $phrase)
     {
-        return $query->where (function (Builder $query) use ($phrase) {
-                $query->where('good_id', 'LIKE', '%' . $phrase . '%')
-->orWhere('warehouse_id', 'LIKE', '%' . $phrase . '%')
-->orWhere('action_id', 'LIKE', '%' . $phrase . '%')
-->orWhere('user_id', 'LIKE', '%' . $phrase . '%')
-->orWhere('amount', 'LIKE', '%' . $phrase . '%')
-->orWhere('prime_cost', 'LIKE', '%' . $phrase . '%')
-;
-             });
+        return $query->where(function (Builder $query) use ($phrase) {
+            $query->where('good_id', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('warehouse_id', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('action_id', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('user_id', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('amount', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('prime_cost', 'LIKE', '%' . $phrase . '%');
+        });
     }
 
     /**
@@ -226,15 +224,15 @@ class HCECStockHistoryController extends HCBaseController
 
         $_data = request()->all();
 
-        if (array_has($_data, 'id'))
-            array_set ($data, 'record.id', array_get ($_data, 'id'));
+        if( array_has($_data, 'id') )
+            array_set($data, 'record.id', array_get($_data, 'id'));
 
         array_set($data, 'record.good_id', array_get($_data, 'good_id'));
-array_set($data, 'record.warehouse_id', array_get($_data, 'warehouse_id'));
-array_set($data, 'record.action_id', array_get($_data, 'action_id'));
-array_set($data, 'record.user_id', array_get($_data, 'user_id'));
-array_set($data, 'record.amount', array_get($_data, 'amount'));
-array_set($data, 'record.prime_cost', array_get($_data, 'prime_cost'));
+        array_set($data, 'record.warehouse_id', array_get($_data, 'warehouse_id'));
+        array_set($data, 'record.action_id', array_get($_data, 'action_id'));
+        array_set($data, 'record.user_id', array_get($_data, 'user_id'));
+        array_set($data, 'record.amount', array_get($_data, 'amount'));
+        array_set($data, 'record.prime_cost', array_get($_data, 'prime_cost'));
 
         return $data;
     }

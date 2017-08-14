@@ -2,7 +2,10 @@
 
 namespace interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock;
 
+use interactivesolutions\honeycombacl\app\models\HCUsers;
 use interactivesolutions\honeycombcore\models\HCUuidModel;
+use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
+use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\HCECWarehouses;
 
 class HCECStockHistory extends HCUuidModel
 {
@@ -19,4 +22,36 @@ class HCECStockHistory extends HCUuidModel
      * @var array
      */
     protected $fillable = ['id', 'good_id', 'warehouse_id', 'action_id', 'user_id', 'amount', 'prime_cost'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function good()
+    {
+        return $this->belongsTo(HCECGoods::class, 'good_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function warehouse()
+    {
+        return $this->belongsTo(HCECWarehouses::class, 'warehouse_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function action()
+    {
+        return $this->belongsTo(HCECStockHistoryActions::class, 'action_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(HCUsers::class, 'user_id', 'id');
+    }
 }
