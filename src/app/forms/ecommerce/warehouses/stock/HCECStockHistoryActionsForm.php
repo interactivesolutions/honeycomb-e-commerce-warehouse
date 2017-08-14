@@ -28,30 +28,54 @@ class HCECStockHistoryActionsForm
                 ],
             ],
             'structure'  => [
+
                 [
-    "type"            => "singleLine",
-    "fieldID"         => "translations.name",
-    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.name"),
-    "required"        => 1,
-    "requiredVisible" => 1,
-    "tabID"           => trans('HCTranslations::core.translations'),
-    "multiLanguage"   => 1,
-],[
-    "type"            => "singleLine",
-    "fieldID"         => "translations.description",
-    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.description"),
-    "required"        => 0,
-    "requiredVisible" => 0,
-    "tabID"           => trans('HCTranslations::core.translations'),
-    "multiLanguage"   => 1,
-],
+                    "type"            => "radioList",
+                    "fieldID"         => "sign",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.sign"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                    "tabID"           => trans('HCTranslations::core.general'),
+                    "options"         => [
+                        [
+                            'id'    => '-1',
+                            'label' => trans('HCTranslations::core.decrease'),
+                        ],
+                        [
+                            'id'    => '0',
+                            'label' => trans('HCTranslations::core.neutral'),
+                        ],
+                        [
+                            'id'    => '1',
+                            'label' => trans('HCTranslations::core.increase'),
+                        ],
+                    ],
+                ],
+                [
+                    "type"            => "singleLine",
+                    "fieldID"         => "translations.name",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.name"),
+                    "required"        => 1,
+                    "requiredVisible" => 1,
+                    "tabID"           => trans('HCTranslations::core.translations'),
+                    "multiLanguage"   => 1,
+                ],
+                [
+                    "type"            => "singleLine",
+                    "fieldID"         => "translations.description",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.description"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                    "tabID"           => trans('HCTranslations::core.translations'),
+                    "multiLanguage"   => 1,
+                ],
             ],
         ];
 
-        if ($this->multiLanguage)
+        if( $this->multiLanguage )
             $form['availableLanguages'] = getHCContentLanguages();
 
-        if (!$edit)
+        if( ! $edit )
             return $form;
 
         //Make changes to edit form if needed

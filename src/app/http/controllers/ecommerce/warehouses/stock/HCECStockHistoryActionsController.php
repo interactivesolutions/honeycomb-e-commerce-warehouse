@@ -53,6 +53,10 @@ class HCECStockHistoryActionsController extends HCBaseController
     private function getAdminListHeader()
     {
         return [
+            'sign'                            => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.sign'),
+            ],
             'translations.{lang}.name'        => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.name'),
@@ -218,6 +222,8 @@ class HCECStockHistoryActionsController extends HCBaseController
 
         if( array_has($_data, 'id') )
             array_set($data, 'record.id', array_get($_data, 'id'));
+
+        array_set($data, 'record.sign', array_get($_data, 'sign'));
 
         array_set($data, 'translations', array_get($_data, 'translations'));
 

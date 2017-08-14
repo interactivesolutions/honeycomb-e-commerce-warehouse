@@ -12,7 +12,7 @@ class HCECStockHistoryActionsValidator extends HCCoreFormValidator
     protected function rules()
     {
         return [
-            
+            'sign' => 'required',
         ];
     }
 }

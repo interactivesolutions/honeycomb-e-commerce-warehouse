@@ -18,6 +18,6 @@ class HCECStockHistoryActions extends HCMultiLanguageModel
      *
      * @var array
      */
-    protected $fillable = ['id'];
+    protected $fillable = ['id', 'sign'];
 
 }

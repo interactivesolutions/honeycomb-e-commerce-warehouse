@@ -30,11 +30,11 @@ class HCECStockHistoryController extends HCBaseController
 
         if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create') )
             $config['actions'][] = 'new';
-
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update') ) {
-            $config['actions'][] = 'update';
-            $config['actions'][] = 'restore';
-        }
+//
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update') ) {
+//            $config['actions'][] = 'update';
+//            $config['actions'][] = 'restore';
+//        }
 
         if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete') )
             $config['actions'][] = 'delete';
