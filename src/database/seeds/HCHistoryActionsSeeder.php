@@ -24,7 +24,7 @@ class HCHistoryActionsSeeder extends Seeder
             ],
             [
                 'id'   => 'warehouse-replenishment-reserve',
-                'sign' => '0',
+                'sign' => '1',
             ],
             [
                 'id'   => 'reserved',
