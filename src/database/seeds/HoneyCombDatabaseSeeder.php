@@ -1,4 +1,5 @@
 <?php
+
 namespace interactivesolutions\honeycombecommercewarehouse\database\seeds;
 
 use Illuminate\Database\Seeder;
@@ -12,6 +13,6 @@ class HoneyCombDatabaseSeeder extends Seeder
      */
     public function run()
     {
-
+        $this->call(HCHistoryActionsSeeder::class);
     }
 }
