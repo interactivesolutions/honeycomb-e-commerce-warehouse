@@ -4,6 +4,7 @@ namespace interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\
 
 use interactivesolutions\honeycombacl\app\models\HCUsers;
 use interactivesolutions\honeycombcore\models\HCUuidModel;
+use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\goods\combinations\HCECCombinations;
 use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\HCECWarehouses;
 
@@ -21,7 +22,7 @@ class HCECStockHistory extends HCUuidModel
      *
      * @var array
      */
-    protected $fillable = ['id', 'good_id', 'warehouse_id', 'action_id', 'user_id', 'amount', 'prime_cost'];
+    protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'action_id', 'user_id', 'amount', 'prime_cost'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -29,6 +30,14 @@ class HCECStockHistory extends HCUuidModel
     public function good()
     {
         return $this->belongsTo(HCECGoods::class, 'good_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function combination()
+    {
+        return $this->belongsTo(HCECCombinations::class, 'combination_id', 'id');
     }
 
     /**
