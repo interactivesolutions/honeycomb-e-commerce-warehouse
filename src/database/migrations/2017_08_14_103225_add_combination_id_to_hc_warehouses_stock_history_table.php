@@ -18,6 +18,8 @@ class AddCombinationIdToHcWarehousesStockHistoryTable extends Migration
 
             $table->foreign('combination_id')->references('id')->on('hc_goods_combinations')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
+
+        \DB::statement("ALTER TABLE `hc_warehouses_stock_history` CHANGE `user_id` `user_id` VARCHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;");
     }
 
     /**
