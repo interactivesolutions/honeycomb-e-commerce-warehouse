@@ -30,16 +30,16 @@ class HCECStockHistoryController extends HCBaseController
             'headers'     => $this->getAdminListHeader(),
         ];
 
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create') )
-            $config['actions'][] = 'new';
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_create') )
+//            $config['actions'][] = 'new';
 //
 //        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_update') ) {
 //            $config['actions'][] = 'update';
 //            $config['actions'][] = 'restore';
 //        }
 
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete') )
-            $config['actions'][] = 'delete';
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_delete') )
+//            $config['actions'][] = 'delete';
 
         $config['actions'][] = 'search';
         $config['filters'] = $this->getFilters();
@@ -93,8 +93,6 @@ class HCECStockHistoryController extends HCBaseController
         $data = $this->getInputData();
 
         $record = HCECStockHistory::create(array_get($data, 'record'));
-
-        $this->updateStockSummary($data, $record);
 
         return $this->apiShow($record->id);
     }
@@ -271,49 +269,5 @@ class HCECStockHistoryController extends HCBaseController
         $filters = [];
 
         return $filters;
-    }
-
-    /**
-     * @param $data
-     * @param $record
-     * @throws \Exception
-     */
-    protected function updateStockSummary($data, $record)
-    {
-        $record->load('action');
-
-        $summary = HCECStockSummary::where(['good_id' => $data['record']['good_id'], 'warehouse_id' => $data['record']['warehouse_id']])->first();
-
-        $sign = $record->action->sign;
-
-        if( is_null($summary) ) {
-
-            if( $sign == '-1' ) {
-                throw new \Exception('Can\'t decrease items from not existing quantity in stock summary for this product');
-            }
-
-            HCECStockSummary::create([
-                'good_id'            => $data['record']['good_id'],
-                'warehouse_id'       => $data['record']['warehouse_id'],
-                'ordered'            => 0,
-                'in_transit'         => 0,
-                'on_sale'            => 0,
-                'reserved'           => 0,
-                'ready_for_shipment' => 0,
-                'total'              => $data['record']['amount'],
-            ]);
-
-        } else {
-
-            $total = $summary->total - $data['record']['amount'];
-
-            if( $total < 0 ) {
-                throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.errors.left_goods', ['q' => $data['record']['amount'], 'left' => $summary->total]));
-            }
-
-            // update total
-            $summary->total = $total;
-            $summary->save();
-        }
     }
 }

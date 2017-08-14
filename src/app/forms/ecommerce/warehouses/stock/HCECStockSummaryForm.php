@@ -4,6 +4,7 @@ namespace interactivesolutions\honeycombecommercewarehouse\app\forms\ecommerce\w
 
 use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\HCECWarehouses;
+use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
 
 class HCECStockSummaryForm
 {
@@ -44,6 +45,7 @@ class HCECStockSummaryForm
                         "showNodes"              => ["translations.{lang}.label"],
                     ],
                 ],
+                // TODO add combination form dependency
                 [
                     "type"            => "dropDownList",
                     "fieldID"         => "warehouse_id",
@@ -58,41 +60,31 @@ class HCECStockSummaryForm
                     ],
                 ],
                 [
-                    "type"            => "singleLine",
-                    "fieldID"         => "ordered",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.ordered"),
+                    "type"            => "dropDownList",
+                    "fieldID"         => "action_id",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id"),
                     "required"        => 1,
                     "requiredVisible" => 1,
-                ], [
+                    "options"         => HCECStockHistoryActions::select('id')->with('translations')->get(),
+                    "search"          => [
+                        "maximumSelectionLength" => 1,
+                        "minimumSelectionLength" => 1,
+                        "showNodes"              => ["translations.{lang}.name"],
+                    ],
+                ],
+                [
                     "type"            => "singleLine",
-                    "fieldID"         => "in_transit",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.in_transit"),
+                    "fieldID"         => "amount",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.amount"),
                     "required"        => 1,
                     "requiredVisible" => 1,
-                ], [
+                ],
+                [
                     "type"            => "singleLine",
-                    "fieldID"         => "on_sale",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.on_sale"),
-                    "required"        => 1,
-                    "requiredVisible" => 1,
-                ], [
-                    "type"            => "singleLine",
-                    "fieldID"         => "reserved",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.reserved"),
-                    "required"        => 1,
-                    "requiredVisible" => 1,
-                ], [
-                    "type"            => "singleLine",
-                    "fieldID"         => "ready_for_shipment",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.ready_for_shipment"),
-                    "required"        => 1,
-                    "requiredVisible" => 1,
-                ], [
-                    "type"            => "singleLine",
-                    "fieldID"         => "total",
-                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_summary.total"),
-                    "required"        => 1,
-                    "requiredVisible" => 1,
+                    "fieldID"         => "prime_cost",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
                 ],
             ],
         ];

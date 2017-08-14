@@ -91,7 +91,8 @@ class HCECStockHistoryForm
                     "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.amount"),
                     "required"        => 1,
                     "requiredVisible" => 1,
-                ], [
+                ],
+                [
                     "type"            => "singleLine",
                     "fieldID"         => "prime_cost",
                     "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost"),

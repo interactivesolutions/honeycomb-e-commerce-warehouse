@@ -1,4 +1,6 @@
-<?php namespace interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock;
+<?php
+
+namespace interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock;
 
 use interactivesolutions\honeycombcore\http\controllers\HCCoreFormValidator;
 
@@ -12,15 +14,10 @@ class HCECStockSummaryValidator extends HCCoreFormValidator
     protected function rules()
     {
         return [
-            'good_id' => 'required',
-'warehouse_id' => 'required',
-'ordered' => 'required',
-'in_transit' => 'required',
-'on_sale' => 'required',
-'reserved' => 'required',
-'ready_for_shipment' => 'required',
-'total' => 'required',
-
+            'good_id'      => 'required|exists:hc_goods,id',
+            'warehouse_id' => 'required|exists:hc_warehouses,id',
+            'action_id'    => 'required|exists:hc_warehouses_stock_history_actions,id',
+            'amount'       => 'required',
         ];
     }
 }

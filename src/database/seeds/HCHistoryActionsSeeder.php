@@ -37,7 +37,7 @@ class HCHistoryActionsSeeder extends Seeder
                 [
                     'language_code' => 'lt',
                     'name'          => 'Sandėlio papildymas pardavimui',
-                    'description'   => 'Kai prekės atvežamos į sandelį ir iš karto dedamos į pardavimą, sandelio atžvilgiu. Dar bus kiekvienos prekės nustatymuose bus koks turi būti mažiausias kieks sandelyje ir tik virš jo pardavinėti.',
+                    'description'   => 'Kai prekės atvežamos į sandelį ir iš karto dedamos į pardavimą, sandelio atžvilgiu',
                 ],
                 [
                     'language_code' => 'en',
