@@ -1,6 +1,6 @@
 <?php
 return [
-    'page_title'   => 'StockHistory',
+    'page_title'   => 'Stock history',
     'good_id'      => 'Good',
     'warehouse_id' => 'Warehouse',
     'action_id'    => 'Action',
