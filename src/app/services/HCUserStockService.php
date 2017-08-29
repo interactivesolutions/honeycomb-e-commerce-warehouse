@@ -12,6 +12,7 @@ class HCUserStockService
      * @param $combinationId
      * @param $amount
      * @param null $warehouseId
+     * @return array
      * @throws \Exception
      */
     public function reserve($goodId, $combinationId, $amount, $warehouseId = null)
@@ -35,6 +36,8 @@ class HCUserStockService
 
         // log history
         $this->logHistory('reserved', $stock, $amount);
+
+        return $stock;
     }
 
     /**
