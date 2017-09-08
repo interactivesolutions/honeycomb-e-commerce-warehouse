@@ -22,7 +22,7 @@ class HCECStockHistory extends HCUuidModel
      *
      * @var array
      */
-    protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'action_id', 'user_id', 'amount', 'prime_cost'];
+    protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'action_id', 'user_id', 'amount', 'prime_cost', 'comment'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -7,6 +7,7 @@ return [
     'user_id'      => 'User',
     'amount'       => 'Amount',
     'prime_cost'   => 'Prime cost',
+    'comment'      => 'Comment',
 
     'errors' => [
         'left_goods' => 'You don\'t have enough usable quantity. Cannot remove :q items out of :left.',

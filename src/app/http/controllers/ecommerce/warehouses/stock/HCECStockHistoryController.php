@@ -6,14 +6,10 @@ use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistory;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
-use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockSummary;
 use interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock\HCECStockHistoryValidator;
 
 class HCECStockHistoryController extends HCBaseController
 {
-
-    //TODO recordsPerPage setting
-
     /**
      * Returning configured admin view
      *
@@ -79,7 +75,10 @@ class HCECStockHistoryController extends HCBaseController
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.prime_cost'),
             ],
-
+            'comment'                         => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.comment'),
+            ],
         ];
     }
 
@@ -211,7 +210,15 @@ class HCECStockHistoryController extends HCBaseController
                 ->orWhere('action_id', 'LIKE', '%' . $phrase . '%')
                 ->orWhere('user_id', 'LIKE', '%' . $phrase . '%')
                 ->orWhere('amount', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('prime_cost', 'LIKE', '%' . $phrase . '%');
+                ->orWhere('prime_cost', 'LIKE', '%' . $phrase . '%')
+                ->orWhere('comment', 'LIKE', '%' . $phrase . '%')
+                ->orWhereHas('good.translations', function ($query) use ($phrase) {
+                    $query->where('label', 'LIKE', '%' . $phrase . '%');
+                })->orWhereHas('user', function ($query) use ($phrase) {
+                    $query->where('email', 'LIKE', '%' . $phrase . '%');
+                })->orWhereHas('warehouse', function ($query) use ($phrase) {
+                    $query->where('name', 'LIKE', '%' . $phrase . '%');
+                });
         });
     }
 
@@ -235,6 +242,7 @@ class HCECStockHistoryController extends HCBaseController
         array_set($data, 'record.user_id', array_get($_data, 'user_id'));
         array_set($data, 'record.amount', array_get($_data, 'amount'));
         array_set($data, 'record.prime_cost', array_get($_data, 'prime_cost'));
+        array_set($data, 'record.comment', array_get($_data, 'comment'));
 
         return $data;
     }
@@ -267,6 +275,16 @@ class HCECStockHistoryController extends HCBaseController
     public function getFilters()
     {
         $filters = [];
+
+        $types = [
+            'fieldID'   => 'action_id',
+            'type'      => 'dropDownList',
+            'label'     => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
+            'options'   => HCECStockHistoryActions::with('translations')->get()->toArray(),
+            'showNodes' => ['translations.{lang}.name'],
+        ];
+
+        $filters[] = addAllOptionToDropDownList($types);
 
         return $filters;
     }
