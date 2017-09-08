@@ -13,5 +13,7 @@ return [
     'errors' => [
         'cant_reserve'                => 'Can\'t reserve items. Available "on sale" items count is zero.',
         'not_enough_items_to_reserve' => 'You don\'t have enough on sale items. Cannot reserve :r items of :left.',
+        'cant_remove_on_sale'         => 'Can\'t remove "on sale" items. Available to remove "on sale" items count is :count.',
+        'cant_remove_reserved'        => 'Can\'t remove "reserved". Available to remove "reserved" items count is :count.',
     ],
 ];

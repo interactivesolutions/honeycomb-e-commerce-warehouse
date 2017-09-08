@@ -86,6 +86,13 @@ class HCECStockSummaryForm
                     "required"        => 0,
                     "requiredVisible" => 0,
                 ],
+                [
+                    "type"            => "textArea",
+                    "fieldID"         => "comment",
+                    "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.comment"),
+                    "required"        => 0,
+                    "requiredVisible" => 0,
+                ],
             ],
         ];
 

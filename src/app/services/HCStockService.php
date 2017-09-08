@@ -12,9 +12,10 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param null $warehouseId
+     * @param null $comment
      * @throws \Exception
      */
-    public function reserve($goodId, $combinationId, $amount, $warehouseId)
+    public function reserve($goodId, $combinationId, $amount, $warehouseId, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -34,7 +35,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('reserved', $stock, $amount);
+        $this->logHistory('reserved', $stock, $amount, $comment);
     }
 
     /**
@@ -42,8 +43,9 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param null $comment
      */
-    public function replenishmentReserve($goodId, $combinationId, $amount, $warehouseId)
+    public function replenishmentReserve($goodId, $combinationId, $amount, $warehouseId, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -66,7 +68,7 @@ class HCStockService
         }
 
         // log history
-        $this->logHistory('warehouse-replenishment-reserve', $stock, $amount);
+        $this->logHistory('warehouse-replenishment-reserve', $stock, $amount, $comment);
     }
 
     /**
@@ -74,8 +76,9 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param null $comment
      */
-    public function replenishmentForSale($goodId, $combinationId, $amount, $warehouseId)
+    public function replenishmentForSale($goodId, $combinationId, $amount, $warehouseId, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -97,7 +100,63 @@ class HCStockService
         }
 
         // log history
-        $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount);
+        $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
+    public function removeOnSale($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->on_sale == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_on_sale', ['count' => 0]));
+        }
+
+        if( $stock->on_sale < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_on_sale', ['count' => $stock->on_sale]));
+        }
+
+        $stock->on_sale = $stock->on_sale - $amount;
+        $stock->total = $stock->total - $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-remove-from-sale', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
+    public function removeReserved($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->reserved == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_reserved', ['count' => 0]));
+        }
+
+        if( $stock->reserved < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_reserved', ['count' => $stock->reserved]));
+        }
+
+        $stock->reserved = $stock->reserved - $amount;
+        $stock->total = $stock->total - $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-remove-from-reserved', $stock, $amount, $comment);
     }
 
     /**
@@ -120,10 +179,11 @@ class HCStockService
      * Log to history
      *
      * @param $actionId
-     * @param $amount
      * @param $stock
+     * @param $amount
+     * @param $comment
      */
-    protected function logHistory($actionId, $stock, $amount)
+    protected function logHistory($actionId, $stock, $amount, $comment)
     {
         HCECStockHistory::create([
             'good_id'        => $stock->good_id,
@@ -132,6 +192,7 @@ class HCStockService
             'action_id'      => $actionId,
             'user_id'        => auth()->check() ? auth()->id() : null,
             'amount'         => $amount,
+            'comment'        => $comment,
         ]);
     }
 }

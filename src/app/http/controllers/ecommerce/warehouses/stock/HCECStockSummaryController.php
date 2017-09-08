@@ -251,6 +251,7 @@ class HCECStockSummaryController extends HCBaseController
         array_set($data, 'history.user_id', $this->user()->id);
         array_set($data, 'history.amount', array_get($_data, 'amount'));
         array_set($data, 'history.prime_cost', array_get($_data, 'prime_cost'));
+        array_set($data, 'history.comment', array_get($_data, 'comment'));
 
         return makeEmptyNullable($data);
     }
@@ -306,7 +307,8 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['good_id'],
                 $data['record']['combination_id'],
                 $data['history']['amount'],
-                $data['record']['warehouse_id']
+                $data['record']['warehouse_id'],
+                $data['history']['comment']
             );
 
         } else if( $action->id == 'warehouse-replenishment-reserve' ) {
@@ -314,7 +316,8 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['good_id'],
                 $data['record']['combination_id'],
                 $data['history']['amount'],
-                $data['record']['warehouse_id']
+                $data['record']['warehouse_id'],
+                $data['history']['comment']
             );
 
         } else if( $action->id == 'reserved' ) {
@@ -323,7 +326,28 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['good_id'],
                 $data['record']['combination_id'],
                 $data['history']['amount'],
-                $data['record']['warehouse_id']
+                $data['record']['warehouse_id'],
+                $data['history']['comment']
+            );
+
+        } else if( $action->id == 'warehouse-remove-from-sale' ) {
+
+            $stockService->removeOnSale(
+                $data['record']['good_id'],
+                $data['record']['combination_id'],
+                $data['history']['amount'],
+                $data['record']['warehouse_id'],
+                $data['history']['comment']
+            );
+
+        } else if( $action->id == 'warehouse-remove-from-reserved' ) {
+
+            $stockService->removeReserved(
+                $data['record']['good_id'],
+                $data['record']['combination_id'],
+                $data['history']['amount'],
+                $data['record']['warehouse_id'],
+                $data['history']['comment']
             );
         }
     }

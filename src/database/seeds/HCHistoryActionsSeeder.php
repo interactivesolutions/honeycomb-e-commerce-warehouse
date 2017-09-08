@@ -30,6 +30,14 @@ class HCHistoryActionsSeeder extends Seeder
                 'id'   => 'reserved',
                 'sign' => '0',
             ],
+            [
+                'id'   => 'warehouse-remove-from-sale',
+                'sign' => '-1',
+            ],
+            [
+                'id'   => 'warehouse-remove-from-reserved',
+                'sign' => '-1',
+            ],
         ];
 
         $translations = [
@@ -64,6 +72,28 @@ class HCHistoryActionsSeeder extends Seeder
                 [
                     'language_code' => 'en',
                     'name'          => 'Reserved',
+                ],
+            ],
+            [
+                [
+                    'language_code' => 'lt',
+                    'name'          => 'Parduodamų prekių minusavimas',
+                    'description'   => 'Parduodamų prekių minusavimas. Minusuojami on_sale ir total laukai',
+                ],
+                [
+                    'language_code' => 'en',
+                    'name'          => 'Reduce products on sale',
+                ],
+            ],
+            [
+                [
+                    'language_code' => 'lt',
+                    'name'          => 'Rezervuotų prekių minusavimas',
+                    'description'   => 'Rezervuotų prekių minusavimas. Minusuojami reserved ir total laukai',
+                ],
+                [
+                    'language_code' => 'en',
+                    'name'          => 'Reduce reserved products',
                 ],
             ],
         ];
