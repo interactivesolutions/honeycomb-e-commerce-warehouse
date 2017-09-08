@@ -51,6 +51,10 @@ class HCECStockHistoryController extends HCBaseController
     public function getAdminListHeader()
     {
         return [
+            'created_at'                      => [
+                "type"  => "text",
+                "label" => trans('HCTranslations::core.created'),
+            ],
             'good.translations.{lang}.label'  => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.good_id'),
@@ -177,6 +181,8 @@ class HCECStockHistoryController extends HCBaseController
 
         if( $select == null )
             $select = HCECStockHistory::getFillableFields();
+
+        $select[] = 'created_at';
 
         $list = HCECStockHistory::with($with)->select($select)
             // add filters
