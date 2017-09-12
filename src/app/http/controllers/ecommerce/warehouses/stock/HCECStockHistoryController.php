@@ -63,7 +63,7 @@ class HCECStockHistoryController extends HCBaseController
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.warehouse_id'),
             ],
-            'action.translations.{lang}.name' => [
+            'action.title' => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
             ],
@@ -177,7 +177,9 @@ class HCECStockHistoryController extends HCBaseController
      */
     protected function createQuery(array $select = null)
     {
-        $with = ['good.translations', 'warehouse', 'action.translations', 'user'];
+        $with = ['good.translations', 'warehouse', 'action' => function ($query) {
+            $query->select('id');
+        }, 'user'];
 
         if( $select == null )
             $select = HCECStockHistory::getFillableFields();
@@ -286,8 +288,8 @@ class HCECStockHistoryController extends HCBaseController
             'fieldID'   => 'action_id',
             'type'      => 'dropDownList',
             'label'     => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id'),
-            'options'   => HCECStockHistoryActions::with('translations')->get()->toArray(),
-            'showNodes' => ['translations.{lang}.name'],
+            'options'   => HCECStockHistoryActions::select('id')->get()->toArray(),
+            'showNodes' => ['title'],
         ];
 
         $filters[] = addAllOptionToDropDownList($types);

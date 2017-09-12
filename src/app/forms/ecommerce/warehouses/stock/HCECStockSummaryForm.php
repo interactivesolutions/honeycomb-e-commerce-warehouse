@@ -65,11 +65,11 @@ class HCECStockSummaryForm
                     "label"           => trans("HCECommerceWarehouse::e_commerce_warehouses_stock_history.action_id"),
                     "required"        => 1,
                     "requiredVisible" => 1,
-                    "options"         => HCECStockHistoryActions::select('id')->with('translations')->get(),
+                    "options"         => HCECStockHistoryActions::select('id')->get(),
                     "search"          => [
                         "maximumSelectionLength" => 1,
                         "minimumSelectionLength" => 1,
-                        "showNodes"              => ["translations.{lang}.name"],
+                        "showNodes"              => ["title"],
                     ],
                 ],
                 [
