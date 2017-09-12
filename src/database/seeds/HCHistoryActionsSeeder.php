@@ -5,7 +5,6 @@ namespace interactivesolutions\honeycombecommercewarehouse\database\seeds;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
-use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActionsTranslations;
 use League\Flysystem\Exception;
 
 class HCHistoryActionsSeeder extends Seeder
