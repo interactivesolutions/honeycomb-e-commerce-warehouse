@@ -12,11 +12,11 @@ class HCECWarehousesValidator extends HCCoreFormValidator
     protected function rules()
     {
         return [
-            'reference' => 'required',
-'name' => 'required',
-'management_type' => 'required',
-'currency' => 'required',
-'country_id' => 'required',
+            'reference'       => 'required',
+            'name'            => 'required',
+            'management_type' => 'required',
+            'currency'        => 'required',
+            'country_id'      => 'required',
 
         ];
     }

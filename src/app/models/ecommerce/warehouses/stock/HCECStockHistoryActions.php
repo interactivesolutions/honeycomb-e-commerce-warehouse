@@ -2,9 +2,9 @@
 
 namespace interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock;
 
-use interactivesolutions\honeycombcore\models\HCMultiLanguageModel;
+use interactivesolutions\honeycombcore\models\HCUuidModel;
 
-class HCECStockHistoryActions extends HCMultiLanguageModel
+class HCECStockHistoryActions extends HCUuidModel
 {
     /**
      * The database table used by the model.
@@ -20,4 +20,20 @@ class HCECStockHistoryActions extends HCMultiLanguageModel
      */
     protected $fillable = ['id', 'sign'];
 
+    /**
+     * Appends title
+     *
+     * @var array
+     */
+    protected $appends = ['title'];
+
+    /**
+     * Title attribute
+     *
+     * @return string|\Symfony\Component\Translation\TranslatorInterface
+     */
+    public function getTitleAttribute()
+    {
+        return trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.actions.' . $this->id);
+    }
 }

@@ -12,6 +12,7 @@ class HCHistoryActionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
      * @return void
      * @throws Exception
      */
@@ -40,88 +41,11 @@ class HCHistoryActionsSeeder extends Seeder
             ],
         ];
 
-        $translations = [
-            [
-                [
-                    'language_code' => 'lt',
-                    'name'          => 'Sandėlio papildymas pardavimui',
-                    'description'   => 'Kai prekės atvežamos į sandelį ir iš karto dedamos į pardavimą, sandelio atžvilgiu',
-                ],
-                [
-                    'language_code' => 'en',
-                    'name'          => 'Warehouse replenishment for sale',
-                ],
-            ],
-            [
-                [
-                    'language_code' => 'lt',
-                    'name'          => 'Sandėlio rezervavimo papildymas',
-                    'description'   => 'Kai prekės atvežamos į sandelį ir dedamos į rezervaciją.',
-                ],
-                [
-                    'language_code' => 'en',
-                    'name'          => 'Warehouse replenishment reserve',
-                ],
-            ],
-            [
-                [
-                    'language_code' => 'lt',
-                    'name'          => 'Rezervuota',
-                    'description'   => 'Kai yra užtvirtinamas užsakymas (dar neapmokėtas, bet paruoštas mokėjimui)',
-                ],
-                [
-                    'language_code' => 'en',
-                    'name'          => 'Reserved',
-                ],
-            ],
-            [
-                [
-                    'language_code' => 'lt',
-                    'name'          => 'Parduodamų prekių minusavimas',
-                    'description'   => 'Parduodamų prekių minusavimas. Minusuojami on_sale ir total laukai',
-                ],
-                [
-                    'language_code' => 'en',
-                    'name'          => 'Reduce products on sale',
-                ],
-            ],
-            [
-                [
-                    'language_code' => 'lt',
-                    'name'          => 'Rezervuotų prekių minusavimas',
-                    'description'   => 'Rezervuotų prekių minusavimas. Minusuojami reserved ir total laukai',
-                ],
-                [
-                    'language_code' => 'en',
-                    'name'          => 'Reduce reserved products',
-                ],
-            ],
-        ];
-
         DB::beginTransaction();
 
         try {
             foreach ( $actions as $key => $action ) {
-
-                $record = HCECStockHistoryActions::where('id', $action['id'])->first();
-
-                if( is_null($record) ) {
-                    $record = HCECStockHistoryActions::create($action);
-                }
-
-                foreach ( $translations[$key] as $translation ) {
-
-                    $trans = HCECStockHistoryActionsTranslations::where([
-                        'record_id'     => $record->id,
-                        'language_code' => $translation['language_code'],
-                    ])->first();
-
-                    if( is_null($trans) ) {
-                        HCECStockHistoryActionsTranslations::create($translation + [
-                                'record_id' => $record->id,
-                            ]);
-                    }
-                }
+                HCECStockHistoryActions::firstOrCreate($action);
             }
         } catch ( \Exception $e ) {
             DB::rollback();

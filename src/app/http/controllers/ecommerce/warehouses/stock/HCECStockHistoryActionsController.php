@@ -1,17 +1,14 @@
-<?php namespace interactivesolutions\honeycombecommercewarehouse\app\http\controllers\ecommerce\warehouses\stock;
+<?php
+
+namespace interactivesolutions\honeycombecommercewarehouse\app\http\controllers\ecommerce\warehouses\stock;
 
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
-use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActionsTranslations;
 use interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock\HCECStockHistoryActionsValidator;
-use interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock\HCECStockHistoryActionsTranslationsValidator;
 
 class HCECStockHistoryActionsController extends HCBaseController
 {
-
-    //TODO recordsPerPage setting
-
     /**
      * Returning configured admin view
      *
@@ -28,16 +25,16 @@ class HCECStockHistoryActionsController extends HCBaseController
             'headers'     => $this->getAdminListHeader(),
         ];
 
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_create') )
-            $config['actions'][] = 'new';
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_create') )
+//            $config['actions'][] = 'new';
 
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_update') ) {
-            $config['actions'][] = 'update';
-            $config['actions'][] = 'restore';
-        }
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_update') ) {
+//            $config['actions'][] = 'update';
+//            $config['actions'][] = 'restore';
+//        }
 
-        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_delete') )
-            $config['actions'][] = 'delete';
+//        if( auth()->user()->can('interactivesolutions_honeycomb_e_commerce_warehouse_routes_e_commerce_warehouses_stock_history_actions_delete') )
+//            $config['actions'][] = 'delete';
 
         $config['actions'][] = 'search';
         $config['filters'] = $this->getFilters();
@@ -53,19 +50,14 @@ class HCECStockHistoryActionsController extends HCBaseController
     private function getAdminListHeader()
     {
         return [
-            'sign'                            => [
+            'title' => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.title'),
+            ],
+            'sign'  => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.sign'),
             ],
-            'translations.{lang}.name'        => [
-                "type"  => "text",
-                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.name'),
-            ],
-            'translations.{lang}.description' => [
-                "type"  => "text",
-                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.description'),
-            ],
-
         ];
     }
 
@@ -79,7 +71,6 @@ class HCECStockHistoryActionsController extends HCBaseController
         $data = $this->getInputData();
 
         $record = HCECStockHistoryActions::create(array_get($data, 'record', []));
-        $record->updateTranslations(array_get($data, 'translations', []));
 
         return $this->apiShow($record->id);
     }
@@ -97,7 +88,6 @@ class HCECStockHistoryActionsController extends HCBaseController
         $data = $this->getInputData();
 
         $record->update(array_get($data, 'record', []));
-        $record->updateTranslations(array_get($data, 'translations', []));
 
         return $this->apiShow($record->id);
     }
@@ -123,7 +113,6 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     protected function __apiDestroy(array $list)
     {
-        HCECStockHistoryActionsTranslations::destroy(HCECStockHistoryActionsTranslations::whereIn('record_id', $list)->pluck('id')->toArray());
         HCECStockHistoryActions::destroy($list);
 
         return hcSuccess();
@@ -137,7 +126,6 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     protected function __apiForceDelete(array $list)
     {
-        HCECStockHistoryActionsTranslations::onlyTrashed()->whereIn('record_id', $list)->forceDelete();
         HCECStockHistoryActions::onlyTrashed()->whereIn('id', $list)->forceDelete();
 
         return hcSuccess();
@@ -151,7 +139,6 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     protected function __apiRestore(array $list)
     {
-        HCECStockHistoryActionsTranslations::onlyTrashed()->whereIn('record_id', $list)->restore();
         HCECStockHistoryActions::onlyTrashed()->whereIn('id', $list)->restore();
 
         return hcSuccess();
@@ -165,7 +152,7 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     protected function createQuery(array $select = null)
     {
-        $with = ['translations'];
+        $with = [];
 
         if( $select == null )
             $select = HCECStockHistoryActions::getFillableFields();
@@ -196,16 +183,9 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     protected function searchQuery(Builder $query, string $phrase)
     {
-        $r = HCECStockHistoryActions::getTableName();
-        $t = HCECStockHistoryActionsTranslations::getTableName();
-
-        $query->where(function (Builder $query) use ($phrase) {
-            $query;
+        return $query->where(function (Builder $query) use ($phrase) {
+            $query->where('id', 'LIKE', '%' . $phrase . '%');
         });
-
-        return $query->join($t, "$r.id", "=", "$t.record_id")
-            ->where('name', 'LIKE', '%' . $phrase . '%')
-            ->orWhere('description', 'LIKE', '%' . $phrase . '%');
     }
 
     /**
@@ -216,7 +196,6 @@ class HCECStockHistoryActionsController extends HCBaseController
     protected function getInputData()
     {
         (new HCECStockHistoryActionsValidator())->validateForm();
-        (new HCECStockHistoryActionsTranslationsValidator())->validateForm();
 
         $_data = request()->all();
 
@@ -224,8 +203,6 @@ class HCECStockHistoryActionsController extends HCBaseController
             array_set($data, 'record.id', array_get($_data, 'id'));
 
         array_set($data, 'record.sign', array_get($_data, 'sign'));
-
-        array_set($data, 'translations', array_get($_data, 'translations'));
 
         return makeEmptyNullable($data);
     }
@@ -238,7 +215,7 @@ class HCECStockHistoryActionsController extends HCBaseController
      */
     public function apiShow(string $id)
     {
-        $with = ['translations'];
+        $with = [];
 
         $select = HCECStockHistoryActions::getFillableFields(true);
 
