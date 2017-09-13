@@ -38,6 +38,18 @@ class HCHistoryActionsSeeder extends Seeder
                 'id'   => 'warehouse-remove-from-reserved',
                 'sign' => '-1',
             ],
+            [
+                'id'   => 'warehouse-remove-ready-for-shipment',
+                'sign' => '-1',
+            ],
+            [
+                'id'   => 'move-to-ready-for-shipment',
+                'sign' => '0',
+            ],
+            [
+                'id'   => 'cancel-ready-for-shipment',
+                'sign' => '0',
+            ],
         ];
 
         DB::beginTransaction();

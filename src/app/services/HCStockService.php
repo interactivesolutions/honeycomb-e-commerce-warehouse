@@ -162,6 +162,90 @@ class HCStockService
     /**
      * @param $goodId
      * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
+    public function removeReadyForShipment($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->ready_for_shipment == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_ready_for_shipment', ['count' => 0]));
+        }
+
+        if( $stock->ready_for_shipment < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_remove_ready_for_shipment', ['count' => $stock->ready_for_shipment]));
+        }
+
+        $stock->ready_for_shipment = $stock->ready_for_shipment - $amount;
+        $stock->total = $stock->total - $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-remove-ready-for-shipment', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
+    public function moveToReadyForShipment($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->reserved == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_move_for_shipment', ['count' => 0]));
+        }
+
+        if( $stock->reserved < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_move_for_shipment', ['count' => $stock->reserved]));
+        }
+
+        $stock->reserved = $stock->reserved - $amount;
+        $stock->ready_for_shipment = $stock->ready_for_shipment + $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('move-to-ready-for-shipment', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
+    public function cancelReadyForShipment($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->ready_for_shipment == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_ready_for_shipment', ['count' => 0]));
+        }
+
+        if( $stock->ready_for_shipment < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_ready_for_shipment', ['count' => $stock->ready_for_shipment]));
+        }
+
+        $stock->ready_for_shipment = $stock->ready_for_shipment - $amount;
+        $stock->on_sale = $stock->on_sale + $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('cancel-ready-for-shipment', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
      * @param $warehouseId
      * @return array
      * @throws \Exception
