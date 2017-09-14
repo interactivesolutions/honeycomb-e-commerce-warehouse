@@ -12,10 +12,11 @@ class HCUserStockService
      * @param $combinationId
      * @param $amount
      * @param null $warehouseId
+     * @param null $comment
      * @return array
      * @throws \Exception
      */
-    public function reserve($goodId, $combinationId, $amount, $warehouseId = null)
+    public function reserve($goodId, $combinationId, $amount, $warehouseId = null, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $amount, $warehouseId);
 
@@ -35,7 +36,7 @@ class HCUserStockService
         $stock->save();
 
         // log history
-        $this->logHistory('reserved', $stock, $amount);
+        $this->logHistory('reserved', $stock, $amount, $comment);
 
         return $stock;
     }
@@ -94,10 +95,11 @@ class HCUserStockService
      * Log to history
      *
      * @param $actionId
-     * @param $amount
      * @param $stock
+     * @param $amount
+     * @param null $comment
      */
-    protected function logHistory($actionId, $stock, $amount)
+    protected function logHistory($actionId, $stock, $amount, $comment = null)
     {
         HCECStockHistory::create([
             'good_id'        => $stock->good_id,
@@ -106,6 +108,7 @@ class HCUserStockService
             'action_id'      => $actionId,
             'user_id'        => auth()->check() ? auth()->id() : null,
             'amount'         => $amount,
+            'comment'        => $comment,
         ]);
     }
 }
