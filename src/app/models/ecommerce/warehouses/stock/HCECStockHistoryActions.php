@@ -36,4 +36,15 @@ class HCECStockHistoryActions extends HCUuidModel
     {
         return trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history_actions.actions.' . $this->id);
     }
+
+    /**
+     * Filter user visible stock actions
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeUserVisible($query)
+    {
+        return $query->whereNotIn('id', ['move-to-ready-for-shipment', 'warehouse-remove-ready-for-shipment', 'cancel-ready-for-shipment']);
+    }
 }
