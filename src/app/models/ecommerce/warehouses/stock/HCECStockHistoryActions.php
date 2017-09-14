@@ -45,6 +45,6 @@ class HCECStockHistoryActions extends HCUuidModel
      */
     public function scopeUserVisible($query)
     {
-        return $query->whereNotIn('id', ['move-to-ready-for-shipment', 'warehouse-remove-ready-for-shipment', 'cancel-ready-for-shipment']);
+        return $query->whereNotIn('id', ['move-to-ready-for-shipment', 'warehouse-remove-ready-for-shipment', 'cancel-ready-for-shipment', 'warehouse-cancel-reserved']);
     }
 }

@@ -167,6 +167,34 @@ class HCStockService
      * @param null $comment
      * @throws \Exception
      */
+    public function cancelReserved($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->reserved == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_reserved', ['count' => 0]));
+        }
+
+        if( $stock->reserved < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_reserved', ['count' => $stock->reserved]));
+        }
+
+        $stock->reserved = $stock->reserved - $amount;
+        $stock->on_sale = $stock->on_sale + $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-cancel-reserved', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
     public function removeReadyForShipment($goodId, $combinationId, $amount, $warehouseId, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);

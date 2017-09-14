@@ -13,5 +13,6 @@ return [
         'move-to-ready-for-shipment'          => 'Perkelti prekes iš rezervuotų į paruoštą siuntimui',
         'warehouse-remove-ready-for-shipment' => 'Minusuoti prekes iš paruoštų siuntimui',
         'cancel-ready-for-shipment'           => 'Atšaukti paruoštas prekes siuntimui',
+        'warehouse-cancel-reserved'           => 'Atšaukti rezervuotas prekes',
     ],
 ];

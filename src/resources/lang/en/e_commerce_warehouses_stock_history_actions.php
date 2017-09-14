@@ -13,5 +13,6 @@ return [
         'move-to-ready-for-shipment'          => 'Move to ready for shipment from reserved',
         'warehouse-remove-ready-for-shipment' => 'Remove ready for shipment',
         'cancel-ready-for-shipment'           => 'Cancel ready for shipment',
+        'warehouse-cancel-reserved'           => 'Cancel reserved products',
     ],
 ];

@@ -50,6 +50,10 @@ class HCHistoryActionsSeeder extends Seeder
                 'id'   => 'cancel-ready-for-shipment',
                 'sign' => '0',
             ],
+            [
+                'id'   => 'warehouse-cancel-reserved',
+                'sign' => '0',
+            ],
         ];
 
         DB::beginTransaction();
