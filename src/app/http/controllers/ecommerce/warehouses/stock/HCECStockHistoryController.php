@@ -4,6 +4,7 @@ namespace interactivesolutions\honeycombecommercewarehouse\app\http\controllers\
 
 use Illuminate\Database\Eloquent\Builder;
 use interactivesolutions\honeycombcore\http\controllers\HCBaseController;
+use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistory;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistoryActions;
 use interactivesolutions\honeycombecommercewarehouse\app\validators\ecommerce\warehouses\stock\HCECStockHistoryValidator;
@@ -292,7 +293,16 @@ class HCECStockHistoryController extends HCBaseController
             'showNodes' => ['title'],
         ];
 
+        $goods = [
+            'fieldID'   => 'good_id',
+            'type'      => 'dropDownList',
+            'label'     => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_history.good_id'),
+            'options'   => HCECGoods::with('translations')->select('id')->get()->toArray(),
+            'showNodes' => ['translations.{lang}.label'],
+        ];
+
         $filters[] = addAllOptionToDropDownList($types);
+        $filters[] = addAllOptionToDropDownList($goods);
 
         return $filters;
     }
