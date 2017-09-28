@@ -2,6 +2,7 @@
 
 namespace interactivesolutions\honeycombecommercewarehouse\app\services;
 
+use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistory;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockSummary;
 
@@ -28,7 +29,14 @@ class HCUserStockService
         $onSale = $stock->on_sale - $amount;
 
         if( $onSale < 0 ) {
-            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.not_enough_items_to_reserve', ['r' => $amount, 'left' => $stock->on_sale]));
+
+            $good = HCECGoods::find($goodId);
+
+            if( is_null($good) || ! $good->allow_pre_order ) {
+                throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.not_enough_items_to_reserve', ['r' => $amount, 'left' => $stock->on_sale]));
+            }
+
+            return $this->preOrder($good, $combinationId, $amount, $warehouseId, $comment);
         }
 
         $stock->on_sale = $stock->on_sale - $amount;
@@ -42,7 +50,7 @@ class HCUserStockService
     }
 
     /**
-     * @param $goodId
+     * @param $good
      * @param $combinationId
      * @param $amount
      * @param null $warehouseId
@@ -50,9 +58,25 @@ class HCUserStockService
      * @return array
      * @throws \Exception
      */
-    public function preOrder($goodId, $combinationId, $amount, $warehouseId = null, $comment = null)
+    public function preOrder($good, $combinationId, $amount, $warehouseId = null, $comment = null)
     {
-        $stock = $this->getStockSummary($goodId, $combinationId, $amount, $warehouseId);
+        // TODO check for multiple warehouses
+        $stocks = HCECStockSummary::where([
+            'good_id'        => $good->id,
+            'combination_id' => $combinationId,
+        ])->get();
+
+        $availableToPreOrder = $good->pre_order_count - $stocks->sum('pre_ordered');
+
+        if( $availableToPreOrder < 0 || $amount > $availableToPreOrder ) {
+            throw new \Exception(trans('HCECommerceOrders::e_commerce_carts.errors.not_enough_to_pre_order', ['available' => $availableToPreOrder]));
+        }
+
+        if( is_null($warehouseId) ) {
+            $stock = $stocks->where('warehouse_id', $warehouseId)->first();
+        } else {
+            $stock = $stocks->first();
+        }
 
         if( is_null($stock) ) {
             throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_reserve'));
