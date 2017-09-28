@@ -23,20 +23,19 @@ class HCUserStockService
 
         // Kai yra užtvirtinamas užsakymas (dar neapmokėtas, bet paruoštas mokėjimui). iš on_sale permetam į reserved lauką kiekį.
         if( is_null($stock) ) {
-            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_reserve'));
+
+            $error = trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_reserve');
+
+            return $this->makePreOrder($goodId, $combinationId, $amount, $warehouseId, $comment, $error);
         }
 
         $onSale = $stock->on_sale - $amount;
 
         if( $onSale < 0 ) {
 
-            $good = HCECGoods::find($goodId);
+            $error = trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.not_enough_items_to_reserve', ['r' => $amount, 'left' => $stock->on_sale]);
 
-            if( is_null($good) || ! $good->allow_pre_order ) {
-                throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.not_enough_items_to_reserve', ['r' => $amount, 'left' => $stock->on_sale]));
-            }
-
-            return $this->preOrder($good, $combinationId, $amount, $warehouseId, $comment);
+            return $this->makePreOrder($goodId, $combinationId, $amount, $warehouseId, $comment, $error);
         }
 
         $stock->on_sale = $stock->on_sale - $amount;
@@ -73,9 +72,9 @@ class HCUserStockService
         }
 
         if( is_null($warehouseId) ) {
-            $stock = $stocks->where('warehouse_id', $warehouseId)->first();
-        } else {
             $stock = $stocks->first();
+        } else {
+            $stock = $stocks->where('warehouse_id', $warehouseId)->first();
         }
 
         if( is_null($stock) ) {
@@ -160,5 +159,25 @@ class HCUserStockService
             'amount'         => $amount,
             'comment'        => $comment,
         ]);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param $comment
+     * @return array
+     * @throws \Exception
+     */
+    protected function makePreOrder($goodId, $combinationId, $amount, $warehouseId, $comment, $errorText): array
+    {
+        $good = HCECGoods::find($goodId);
+
+        if( is_null($good) || ! $good->allow_pre_order ) {
+            throw new \Exception($errorText);
+        }
+
+        return $this->preOrder($good, $combinationId, $amount, $warehouseId, $comment);
     }
 }
