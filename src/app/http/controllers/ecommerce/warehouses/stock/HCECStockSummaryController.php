@@ -87,7 +87,10 @@ class HCECStockSummaryController extends HCBaseController
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.total'),
             ],
-
+            'pre_ordered'                          => [
+                "type"  => "text",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.pre_ordered'),
+            ],
         ];
     }
 

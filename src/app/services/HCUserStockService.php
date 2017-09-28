@@ -45,6 +45,32 @@ class HCUserStockService
      * @param $goodId
      * @param $combinationId
      * @param $amount
+     * @param null $warehouseId
+     * @param null $comment
+     * @return array
+     * @throws \Exception
+     */
+    public function preOrder($goodId, $combinationId, $amount, $warehouseId = null, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $amount, $warehouseId);
+
+        if( is_null($stock) ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_reserve'));
+        }
+
+        $stock->pre_ordered = $stock->pre_ordered + $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-pre-ordered', $stock, $amount, $comment);
+
+        return $stock;
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
      * @param $warehouseId
      * @return array
      * @throws \Exception

@@ -60,8 +60,26 @@ class HCStockService
                 'reserved'           => $amount,
                 'ready_for_shipment' => 0,
                 'total'              => $amount,
+                'pre_ordered'        => 0,
             ]);
         } else {
+
+            if( $stock->pre_ordered > 0 ) {
+
+                if( $stock->pre_ordered >= $amount ) {
+                    $stock->pre_ordered = $stock->pre_ordered - $amount;
+
+                    // log history
+                    $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
+                } else {
+                    $preOrderedToRemove = $stock->pre_ordered;
+                    
+                    $stock->pre_ordered = 0;
+                    // log history
+                    $this->logHistory('remove-pre-ordered', $stock, $preOrderedToRemove, $comment);
+                }
+            }
+
             $stock->reserved = $stock->reserved + $amount;
             $stock->total = $stock->total + $amount;
             $stock->save();
@@ -92,9 +110,34 @@ class HCStockService
                 'reserved'           => 0,
                 'ready_for_shipment' => 0,
                 'total'              => $amount,
+                'pre_ordered'        => 0,
             ]);
         } else {
-            $stock->on_sale = $stock->on_sale + $amount;
+
+            if( $stock->pre_ordered > 0 ) {
+
+                if( $stock->pre_ordered >= $amount ) {
+                    $stock->pre_ordered = $stock->pre_ordered - $amount;
+                    $stock->reserved = $stock->reserved + $amount;
+
+                    // log history
+                    $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
+                } else {
+                    // get amount which whill be for replenishment for sale
+                    $availableForReplenishment = $amount - $stock->pre_ordered;
+                    $preOrderedToRemove = $stock->pre_ordered;
+
+                    // move from pre ordered to reserved
+                    $stock->reserved = $stock->reserved + $preOrderedToRemove;
+                    $stock->pre_ordered = 0;
+
+                    $stock->on_sale = $stock->on_sale + $availableForReplenishment;
+
+                    // log history
+                    $this->logHistory('remove-pre-ordered', $stock, $preOrderedToRemove, $comment);
+                }
+            }
+
             $stock->total = $stock->total + $amount;
             $stock->save();
         }

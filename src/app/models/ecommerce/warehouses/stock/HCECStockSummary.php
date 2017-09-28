@@ -21,7 +21,7 @@ class HCECStockSummary extends HCUuidModel
      *
      * @var array
      */
-    protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'ordered', 'in_transit', 'on_sale', 'reserved', 'ready_for_shipment', 'total'];
+    protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'ordered', 'in_transit', 'on_sale', 'reserved', 'ready_for_shipment', 'total', 'pre_ordered'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

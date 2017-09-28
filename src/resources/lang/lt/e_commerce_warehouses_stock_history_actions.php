@@ -14,5 +14,7 @@ return [
         'warehouse-remove-ready-for-shipment' => 'Minusuoti prekes iš paruoštų siuntimui',
         'cancel-ready-for-shipment'           => 'Atšaukti paruoštas prekes siuntimui',
         'warehouse-cancel-reserved'           => 'Atšaukti rezervuotas prekes',
+        'warehouse-pre-ordered'               => 'Pirkimas į minusą',
+        'remove-pre-ordered'                  => 'Minusuoti iš pirkimo į minusą',
     ],
 ];

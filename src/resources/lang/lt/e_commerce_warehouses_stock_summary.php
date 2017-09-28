@@ -9,6 +9,7 @@ return [
     'reserved'           => 'Rezervuota',
     'ready_for_shipment' => 'Paruošta siuntimui',
     'total'              => 'Iš viso',
+    'pre_ordered'        => 'Nupirkta į minusą',
 
     'errors' => [
         'cant_reserve'                   => 'Nepakankamas prekių likutis sandėlyje.',

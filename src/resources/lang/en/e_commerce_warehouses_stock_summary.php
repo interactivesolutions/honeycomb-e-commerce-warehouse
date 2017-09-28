@@ -9,6 +9,7 @@ return [
     'reserved'           => 'Reserved',
     'ready_for_shipment' => 'Ready for shipment',
     'total'              => 'Total',
+    'pre_ordered'          => 'Pre ordered',
 
     'errors' => [
         'cant_reserve'                   => 'Can\'t reserve items. Available "on sale" items count is zero.',
