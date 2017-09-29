@@ -87,7 +87,7 @@ class HCECStockSummaryController extends HCBaseController
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.total'),
             ],
-            'pre_ordered'                          => [
+            'pre_ordered'                    => [
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.pre_ordered'),
             ],
@@ -219,13 +219,12 @@ class HCECStockSummaryController extends HCBaseController
     {
         return $query->where(function (Builder $query) use ($phrase) {
             $query->where('good_id', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('warehouse_id', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('ordered', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('in_transit', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('on_sale', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('reserved', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('ready_for_shipment', 'LIKE', '%' . $phrase . '%')
-                ->orWhere('total', 'LIKE', '%' . $phrase . '%');
+                ->orWhereHas('warehouse', function($query) use ($phrase) {
+                    $query->where('name', 'LIKE', '%' . $phrase . '%');
+                })
+                ->orWhereHas('good.translations', function ($query) use ($phrase) {
+                    $query->where('label', 'LIKE', '%' . $phrase . '%');
+                });
         });
     }
 
