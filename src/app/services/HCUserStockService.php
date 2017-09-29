@@ -65,10 +65,12 @@ class HCUserStockService
             'combination_id' => $combinationId,
         ])->get();
 
+        $onSale =  $available = $stocks->sum('on_sale');
+
         $availableToPreOrder = $good->pre_order_count - $stocks->sum('pre_ordered');
 
         if( $availableToPreOrder < 0 || $amount > $availableToPreOrder ) {
-            throw new \Exception(trans('HCECommerceOrders::e_commerce_carts.errors.not_enough_to_pre_order', ['available' => $availableToPreOrder]));
+            throw new \Exception(trans('HCECommerceOrders::e_commerce_carts.errors.not_enough_to_pre_order', ['on_sale' => $onSale, 'pre_order' => $availableToPreOrder]));
         }
 
         if( is_null($warehouseId) ) {
