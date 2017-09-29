@@ -167,10 +167,11 @@ class HCUserStockService
      * @param $amount
      * @param $warehouseId
      * @param $comment
-     * @return array
+     * @param $errorText
+     * @return HCECStockSummary
      * @throws \Exception
      */
-    protected function makePreOrder($goodId, $combinationId, $amount, $warehouseId, $comment, $errorText): array
+    protected function makePreOrder($goodId, $combinationId, $amount, $warehouseId, $comment, $errorText): HCECStockSummary
     {
         $good = HCECGoods::find($goodId);
 
