@@ -2,6 +2,9 @@
 
 namespace interactivesolutions\honeycombecommercewarehouse\app\services;
 
+use interactivesolutions\honeycombecommerceorders\app\models\ecommerce\HCECOrders;
+use interactivesolutions\honeycombecommerceorders\app\models\ecommerce\orders\HCECOrderDetails;
+use interactivesolutions\honeycombecommerceorders\app\services\HCOrderService;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockHistory;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock\HCECStockSummary;
 
@@ -64,6 +67,7 @@ class HCStockService
             ]);
         } else {
 
+            // TODO REMOVE pre ordered
             if( $stock->pre_ordered > 0 ) {
 
                 if( $stock->pre_ordered >= $amount ) {
@@ -73,7 +77,7 @@ class HCStockService
                     $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
                 } else {
                     $preOrderedToRemove = $stock->pre_ordered;
-                    
+
                     $stock->pre_ordered = 0;
                     // log history
                     $this->logHistory('remove-pre-ordered', $stock, $preOrderedToRemove, $comment);
@@ -113,37 +117,66 @@ class HCStockService
                 'pre_ordered'        => 0,
             ]);
         } else {
-
-            if( $stock->pre_ordered > 0 ) {
-
-                if( $stock->pre_ordered >= $amount ) {
-                    $stock->pre_ordered = $stock->pre_ordered - $amount;
-                    $stock->reserved = $stock->reserved + $amount;
-
-                    // log history
-                    $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
-                } else {
-                    // get amount which whill be for replenishment for sale
-                    $availableForReplenishment = $amount - $stock->pre_ordered;
-                    $preOrderedToRemove = $stock->pre_ordered;
-
-                    // move from pre ordered to reserved
-                    $stock->reserved = $stock->reserved + $preOrderedToRemove;
-                    $stock->pre_ordered = 0;
-
-                    $stock->on_sale = $stock->on_sale + $availableForReplenishment;
-
-                    // log history
-                    $this->logHistory('remove-pre-ordered', $stock, $preOrderedToRemove, $comment);
-                }
-            }
-
+            $stock->on_sale = $stock->on_sale + $amount;
             $stock->total = $stock->total + $amount;
             $stock->save();
         }
 
         // log history
         $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $comment);
+
+
+        if( $stock->pre_ordered > 0 ) {
+            $orderService = new HCOrderService();
+
+            $orders = HCECOrders::with(['details' => function ($query) {
+                $query->isPreOrdered();
+            }])
+                ->select('hc_orders.*', 'hc_order_history.created_at as payment_accepted_at')
+                ->join('hc_order_history', function ($join) {
+                    $join->on('hc_order_history.order_id', '=', 'hc_orders.id')
+                        ->where('hc_order_history.order_payment_status_id', 'payment-accepted');
+                })
+                ->where('hc_orders.order_payment_status_id', 'payment-accepted')
+                ->where('hc_orders.order_state_id', 'waiting-for-stock')
+                ->orderBy('payment_accepted_at')
+                ->get();
+
+            $runWhile = true;
+
+            // while on sale is bigger than order details where is_pre_ordered sum
+            while ( $runWhile ) {
+
+                $found = false;
+
+                foreach ( $orders as $key => $order ) {
+
+                    $requiredOnSale = $order->details->where('is_pre_ordered', '1')->sum('amount');
+
+                    if($requiredOnSale && $requiredOnSale <= $stock->on_sale ) {
+                        $found = true;
+
+                        foreach ( $order->details as $detail ) {
+
+                            $stockComment = sprintf("'%s' pre ordered amount -%s ",  $detail->name, $detail->amount);
+
+                            $stock = $this->removePreOrdered($stock, $detail->amount, $stockComment);
+                            // log history for removing pre_order
+
+                            $detail->is_pre_ordered = '0';
+                            $detail->save();
+                            // log history for changing pre order status
+                        }
+
+                        $orderService->readyForProcessing($order, $comment);
+
+                        array_forget($orders, $key);
+                    }
+                }
+
+                $runWhile = $found;
+            }
+        }
     }
 
     /**
@@ -349,5 +382,24 @@ class HCStockService
             'amount'         => $amount,
             'comment'        => $comment,
         ]);
+    }
+
+    /**
+     * @param $stock
+     * @param $amount
+     * @param $comment
+     * @return mixed
+     */
+    public function removePreOrdered($stock, $amount, $comment)
+    {
+        $stock->on_sale = $stock->on_sale - $amount;
+        $stock->pre_ordered = $stock->pre_ordered - $amount;
+        $stock->reserved = $stock->reserved + $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
+
+        return $stock;
     }
 }
