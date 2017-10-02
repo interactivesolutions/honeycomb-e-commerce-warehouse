@@ -62,7 +62,10 @@ class HCHistoryActionsSeeder extends Seeder
                 'id'   => 'remove-pre-ordered',
                 'sign' => '0',
             ],
-
+            [
+                'id'   => 'warehouse-cancel-pre-ordered',
+                'sign' => '0',
+            ],
         ];
 
         DB::beginTransaction();

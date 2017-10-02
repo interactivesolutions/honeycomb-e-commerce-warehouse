@@ -16,5 +16,6 @@ return [
         'warehouse-cancel-reserved'           => 'Cancel reserved products',
         'warehouse-pre-ordered'               => 'Pre ordered',
         'remove-pre-ordered'                  => 'Remove pre ordered',
+        'warehouse-cancel-pre-ordered'        => 'Cancel pre ordered products',
     ],
 ];

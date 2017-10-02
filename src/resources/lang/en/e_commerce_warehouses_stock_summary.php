@@ -9,7 +9,7 @@ return [
     'reserved'           => 'Reserved',
     'ready_for_shipment' => 'Ready for shipment',
     'total'              => 'Total',
-    'pre_ordered'          => 'Pre ordered',
+    'pre_ordered'        => 'Pre ordered',
 
     'errors' => [
         'cant_reserve'                   => 'Can\'t reserve items. Available "on sale" items count is zero.',
@@ -17,6 +17,7 @@ return [
         'cant_remove_on_sale'            => 'Can\'t remove "on sale" items. Available to remove "on sale" items count is :count.',
         'cant_remove_reserved'           => 'Can\'t remove "reserved". Available to remove "reserved" items count is :count.',
         'cant_cancel_reserved'           => 'Can\'t cancel "reserved". Available to cancel "reserved" items count is :count.',
+        'cant_cancel_pre_ordered'        => 'Can\'t cancel "pre_ordered". Available to cancel "pre_ordered" items count is :count.',
         'cant_move_for_shipment'         => 'Can\'t move to "ready-for-shipment". Available move to "ready-for-shipment" items count is :count.',
         'cant_remove_ready_for_shipment' => 'Can\'t remove "ready-for-shipment". Available to remove "ready-for-shipment" items count is :count.',
     ],

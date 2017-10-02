@@ -22,12 +22,12 @@ class HCStockService
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
-        $onSale = $stock->on_sale - $amount;
-
         // Kai yra užtvirtinamas užsakymas (dar neapmokėtas, bet paruoštas mokėjimui). iš on_sale permetam į reserved lauką kiekį.
         if( is_null($stock) ) {
             throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_reserve'));
         }
+
+        $onSale = $stock->on_sale - $amount;
 
         if( $onSale < 0 ) {
             throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.not_enough_items_to_reserve', ['r' => $amount, 'left' => $stock->on_sale]));
@@ -253,6 +253,33 @@ class HCStockService
      * @param null $comment
      * @throws \Exception
      */
+    public function cancelPreOrdered($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    {
+        $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
+
+        if( is_null($stock) || $stock->pre_ordered == 0 ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_pre_ordered', ['count' => 0]));
+        }
+
+        if( $stock->pre_ordered < $amount ) {
+            throw new \Exception(trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.errors.cant_cancel_pre_ordered', ['count' => $stock->reserved]));
+        }
+
+        $stock->pre_ordered = $stock->pre_ordered - $amount;
+        $stock->save();
+
+        // log history
+        $this->logHistory('warehouse-cancel-pre-ordered', $stock, $amount, $comment);
+    }
+
+    /**
+     * @param $goodId
+     * @param $combinationId
+     * @param $amount
+     * @param $warehouseId
+     * @param null $comment
+     * @throws \Exception
+     */
     public function removeReadyForShipment($goodId, $combinationId, $amount, $warehouseId, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
@@ -336,7 +363,7 @@ class HCStockService
      * @return array
      * @throws \Exception
      */
-    protected function getStockSummary($goodId, $combinationId, $warehouseId)
+    public function getStockSummary($goodId, $combinationId, $warehouseId)
     {
         return HCECStockSummary::where([
             'good_id'        => $goodId,

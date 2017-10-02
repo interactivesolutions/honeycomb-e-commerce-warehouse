@@ -16,5 +16,6 @@ return [
         'warehouse-cancel-reserved'           => 'Atšaukti rezervuotas prekes',
         'warehouse-pre-ordered'               => 'Pirkimas į minusą',
         'remove-pre-ordered'                  => 'Minusuoti iš pirkimo į minusą',
+        'warehouse-cancel-pre-ordered'        => 'Atšaukti į minusą nupirktas prekes',
     ],
 ];
