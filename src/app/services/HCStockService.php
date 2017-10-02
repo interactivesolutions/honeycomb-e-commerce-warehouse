@@ -66,24 +66,6 @@ class HCStockService
                 'pre_ordered'        => 0,
             ]);
         } else {
-
-            // TODO REMOVE pre ordered
-            if( $stock->pre_ordered > 0 ) {
-
-                if( $stock->pre_ordered >= $amount ) {
-                    $stock->pre_ordered = $stock->pre_ordered - $amount;
-
-                    // log history
-                    $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
-                } else {
-                    $preOrderedToRemove = $stock->pre_ordered;
-
-                    $stock->pre_ordered = 0;
-                    // log history
-                    $this->logHistory('remove-pre-ordered', $stock, $preOrderedToRemove, $comment);
-                }
-            }
-
             $stock->reserved = $stock->reserved + $amount;
             $stock->total = $stock->total + $amount;
             $stock->save();
