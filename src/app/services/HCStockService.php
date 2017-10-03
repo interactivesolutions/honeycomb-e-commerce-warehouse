@@ -108,57 +108,7 @@ class HCStockService
         $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $comment);
 
 
-        if( $stock->pre_ordered > 0 ) {
-            $orderService = new HCOrderService();
-
-            $orders = HCECOrders::with(['details' => function ($query) {
-                $query->isPreOrdered();
-            }])
-                ->select('hc_orders.*', 'hc_order_history.created_at as payment_accepted_at')
-                ->join('hc_order_history', function ($join) {
-                    $join->on('hc_order_history.order_id', '=', 'hc_orders.id')
-                        ->where('hc_order_history.order_payment_status_id', 'payment-accepted');
-                })
-                ->where('hc_orders.order_payment_status_id', 'payment-accepted')
-                ->where('hc_orders.order_state_id', 'waiting-for-stock')
-                ->orderBy('payment_accepted_at')
-                ->get();
-
-            $runWhile = true;
-
-            // while on sale is bigger than order details where is_pre_ordered sum
-            while ( $runWhile ) {
-
-                $found = false;
-
-                foreach ( $orders as $key => $order ) {
-
-                    $requiredOnSale = $order->details->where('is_pre_ordered', '1')->sum('amount');
-
-                    if($requiredOnSale && $requiredOnSale <= $stock->on_sale ) {
-                        $found = true;
-
-                        foreach ( $order->details as $detail ) {
-
-                            $stockComment = sprintf("'%s' pre ordered amount -%s ",  $detail->name, $detail->amount);
-
-                            $stock = $this->removePreOrdered($stock, $detail->amount, $stockComment);
-                            // log history for removing pre_order
-
-                            $detail->is_pre_ordered = '0';
-                            $detail->save();
-                            // log history for changing pre order status
-                        }
-
-                        $orderService->readyForProcessing($order, $comment);
-
-                        array_forget($orders, $key);
-                    }
-                }
-
-                $runWhile = $found;
-            }
-        }
+        $this->handlePreOrdered($stock, $comment);
     }
 
     /**
@@ -410,5 +360,98 @@ class HCStockService
         $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
 
         return $stock;
+    }
+
+    /**
+     * @param $comment
+     * @param $stock
+     */
+    protected function handlePreOrdered($stock, $comment)
+    {
+        if( $stock->pre_ordered > 0 ) {
+            $orderService = new HCOrderService();
+
+            $orders = HCECOrders::with(['details' => function ($query) {
+                $query->isPreOrdered();
+            }])
+                ->select('hc_orders.*', 'hc_order_history.created_at as payment_accepted_at')
+                ->join('hc_order_history', function ($join) {
+                    $join->on('hc_order_history.order_id', '=', 'hc_orders.id')
+                        ->where('hc_order_history.order_payment_status_id', 'payment-accepted');
+                })
+                ->where('hc_orders.order_payment_status_id', 'payment-accepted')
+                ->where('hc_orders.order_state_id', 'waiting-for-stock')
+                ->orderBy('payment_accepted_at')
+                ->get();
+
+            $runWhile = true;
+
+            // while on sale is bigger than order details where is_pre_ordered sum
+            while ( $runWhile ) {
+
+                $found = false;
+
+                foreach ( $orders as $key => $order ) {
+
+                    $requiredOnSale = $order->details->where('is_pre_ordered', '1')->sum('amount');
+
+                    if( $requiredOnSale && $requiredOnSale <= $stock->on_sale ) {
+                        $found = true;
+
+                        foreach ( $order->details as $detail ) {
+
+                            $stockComment = sprintf("'%s' pre ordered amount -%s ", $detail->name, $detail->amount);
+
+                            $stock = $this->removePreOrdered($stock, $detail->amount, $stockComment);
+                            // log history for removing pre_order
+
+                            $detail->is_pre_ordered = '0';
+                            $detail->save();
+                            // log history for changing pre order status
+                        }
+
+                        $orderService->readyForProcessing($order, $comment);
+
+                        array_forget($orders, $key);
+                    }
+                }
+
+                $runWhile = $found;
+            }
+        }
+    }
+
+    /**
+     * Reduce pre order
+     *
+     * @param $order
+     * @return bool
+     */
+    public function reducePreOrdered($order)
+    {
+        $order->load(['details' => function ($query) {
+            $query->isPreOrdered();
+        }]);
+
+        foreach ( $order->details as $detail ) {
+
+            $stock = $this->getStockSummary($detail->good_id, $detail->combination_id, $detail->warehouse_id);
+
+            if( $detail->amount && $detail->amount <= $stock->on_sale ) {
+                $stockComment = sprintf("'%s' pre ordered amount -%s from order : %s", $detail->name, $detail->amount, $order->reference);
+
+                // log history for removing pre_order
+                $this->removePreOrdered($stock, $detail->amount, $stockComment);
+
+                $detail->is_pre_ordered = '0';
+                $detail->save();
+            }
+        }
+
+        if( $order->details()->isPreOrdered()->exists() ) {
+            return false;
+        }
+
+        return true;
     }
 }
