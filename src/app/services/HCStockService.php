@@ -307,6 +307,9 @@ class HCStockService
 
         // log history
         $this->logHistory('cancel-ready-for-shipment', $stock, $amount, $comment);
+
+        // handle pre ordered
+        $this->handlePreOrdered($stock, $comment);
     }
 
     /**
