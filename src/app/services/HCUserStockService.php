@@ -65,7 +65,7 @@ class HCUserStockService
             'combination_id' => $combinationId,
         ])->get();
 
-        $onSale =  $available = $stocks->sum('on_sale');
+        $onSale = $available = $stocks->sum('on_sale');
 
         $availableToPreOrder = $good->pre_order_count - $stocks->sum('pre_ordered');
 

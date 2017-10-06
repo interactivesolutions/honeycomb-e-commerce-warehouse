@@ -374,55 +374,55 @@ class HCStockService
      */
     protected function handlePreOrdered($stock, $comment)
     {
-        if( $stock->pre_ordered > 0 ) {
+        if( $stock->pre_ordered <= 0 ) {
+            return;
+        }
+
+        $orders = HCECOrders::with(['details' => function ($query) use ($stock) {
+            $query->where([
+                'good_id'        => $stock->good_id,
+                'combination_id' => $stock->combination_id,
+            ])->isPreOrdered();
+        }])
+            ->select('hc_orders.*', 'hc_order_history.created_at as payment_accepted_at')
+            ->join('hc_order_history', function ($join) {
+                $join->on('hc_order_history.order_id', '=', 'hc_orders.id')
+                    ->where('hc_order_history.order_payment_status_id', 'payment-accepted');
+            })
+            ->where('hc_orders.order_payment_status_id', 'payment-accepted')
+            ->where('hc_orders.order_state_id', 'waiting-for-stock')
+            ->whereHas('details', function ($query) use ($stock) {
+                $query->where([
+                    'good_id'        => $stock->good_id,
+                    'combination_id' => $stock->combination_id,
+                ]);
+            })
+            ->orderBy('payment_accepted_at')
+            ->get();
+
+        if( $orders->isNotEmpty() ) {
             $orderService = new HCOrderService();
 
-            $orders = HCECOrders::with(['details' => function ($query) {
-                $query->isPreOrdered();
-            }])
-                ->select('hc_orders.*', 'hc_order_history.created_at as payment_accepted_at')
-                ->join('hc_order_history', function ($join) {
-                    $join->on('hc_order_history.order_id', '=', 'hc_orders.id')
-                        ->where('hc_order_history.order_payment_status_id', 'payment-accepted');
-                })
-                ->where('hc_orders.order_payment_status_id', 'payment-accepted')
-                ->where('hc_orders.order_state_id', 'waiting-for-stock')
-                ->orderBy('payment_accepted_at')
-                ->get();
+            foreach ( $orders as $key => $order ) {
 
-            $runWhile = true;
+                foreach ( $order->details as $detail ) {
 
-            // while on sale is bigger than order details where is_pre_ordered sum
-            while ( $runWhile ) {
+                    if( $detail->amount && $detail->amount <= $stock->on_sale ) {
+                        $stockComment = sprintf("'%s' pre ordered amount -%s ", $detail->name, $detail->amount);
 
-                $found = false;
+                        // log history for removing pre_order
+                        $stock = $this->removePreOrdered($stock, $detail->amount, $stockComment);
 
-                foreach ( $orders as $key => $order ) {
-
-                    $requiredOnSale = $order->details->where('is_pre_ordered', '1')->sum('amount');
-
-                    if( $requiredOnSale && $requiredOnSale <= $stock->on_sale ) {
-                        $found = true;
-
-                        foreach ( $order->details as $detail ) {
-
-                            $stockComment = sprintf("'%s' pre ordered amount -%s ", $detail->name, $detail->amount);
-
-                            $stock = $this->removePreOrdered($stock, $detail->amount, $stockComment);
-                            // log history for removing pre_order
-
-                            $detail->is_pre_ordered = '0';
-                            $detail->save();
-                            // log history for changing pre order status
-                        }
-
-                        $orderService->readyForProcessing($order, $comment);
-
-                        array_forget($orders, $key);
+                        // change order detail status from pre ordered to normal
+                        $detail->is_pre_ordered = '0';
+                        $detail->save();
                     }
                 }
 
-                $runWhile = $found;
+                // check if order status can be change to ready for processing
+                if( ! $order->details()->isPreOrdered()->count() ) {
+                    $orderService->readyForProcessing($order, "Pre ordered goods arrived");
+                }
             }
         }
     }
