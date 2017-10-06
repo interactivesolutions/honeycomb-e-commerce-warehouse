@@ -107,7 +107,7 @@ class HCStockService
         // log history
         $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $comment);
 
-
+        // handle pre ordered
         $this->handlePreOrdered($stock, $comment);
     }
 
@@ -193,6 +193,9 @@ class HCStockService
 
         // log history
         $this->logHistory('warehouse-cancel-reserved', $stock, $amount, $comment);
+
+        // handle pre ordered
+        $this->handlePreOrdered($stock, $comment);
     }
 
     /**
