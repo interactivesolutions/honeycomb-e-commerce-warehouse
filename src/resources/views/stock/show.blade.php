@@ -42,7 +42,7 @@
             <div class="row">
                 <div class="col-sm-4 col-md-2">
                     <!-- small box -->
-                    <div class="small-box bg-aqua">
+                    <div class="small-box bg-gray">
                         <div class="inner">
                             <h3>{{ $config['summary']->on_sale }}</h3>
 
@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-sm-4 col-md-2">
                     <!-- small box -->
-                    <div class="small-box bg-teal">
+                    <div class="small-box bg-gray">
                         <div class="inner">
                             <h3>{{ $config['summary']->total }}</h3>
 
@@ -82,7 +82,7 @@
                 </div>
                 <div class="col-sm-4 col-md-2">
                     <!-- small box -->
-                    <div class="small-box bg-red">
+                    <div class="small-box bg-gray">
                         <div class="inner">
                             <h3>{{ $config['summary']->pre_ordered }}</h3>
 
