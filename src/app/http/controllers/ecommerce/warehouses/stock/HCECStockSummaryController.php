@@ -91,6 +91,10 @@ class HCECStockSummaryController extends HCBaseController
                 "type"  => "text",
                 "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.pre_ordered'),
             ],
+            'content_url'                => [
+                "type"  => "external-button",
+                "label" => trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.view_content'),
+            ],
         ];
     }
 
@@ -190,6 +194,8 @@ class HCECStockSummaryController extends HCBaseController
 
         if( $select == null )
             $select = HCECStockSummary::getFillableFields();
+
+        HCECStockSummary::$customAppends = ['content_url'];
 
         $list = HCECStockSummary::with($with)->select($select)
             // add filters

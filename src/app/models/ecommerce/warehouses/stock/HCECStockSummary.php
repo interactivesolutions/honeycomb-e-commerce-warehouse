@@ -3,12 +3,15 @@
 namespace interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\warehouses\stock;
 
 use interactivesolutions\honeycombcore\models\HCUuidModel;
+use interactivesolutions\honeycombcore\models\traits\CustomAppends;
 use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\goods\combinations\HCECCombinations;
 use interactivesolutions\honeycombecommercegoods\app\models\ecommerce\HCECGoods;
 use interactivesolutions\honeycombecommercewarehouse\app\models\ecommerce\HCECWarehouses;
 
 class HCECStockSummary extends HCUuidModel
 {
+    use CustomAppends;
+
     /**
      * The database table used by the model.
      *
@@ -22,6 +25,16 @@ class HCECStockSummary extends HCUuidModel
      * @var array
      */
     protected $fillable = ['id', 'good_id', 'combination_id', 'warehouse_id', 'ordered', 'in_transit', 'on_sale', 'reserved', 'ready_for_shipment', 'total', 'pre_ordered'];
+
+    /**
+     * Rules url
+     *
+     * @return string
+     */
+    public function getContentUrlAttribute()
+    {
+        return route('admin.routes.e.commerce.warehouses.stock.summary.{_id}.index', $this->id);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

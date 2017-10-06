@@ -1,15 +1,21 @@
 <?php
 return [
-    'page_title'         => 'Stock management',
-    'good_id'            => 'Good',
-    'warehouse_id'       => 'Warehouse',
-    'ordered'            => 'Ordered',
-    'in_transit'         => 'In transit',
-    'on_sale'            => 'On sale',
-    'reserved'           => 'Reserved',
-    'ready_for_shipment' => 'Ready for shipment',
-    'total'              => 'Total',
-    'pre_ordered'        => 'Pre ordered',
+    'page_title'             => 'Stock management',
+    'good_id'                => 'Good',
+    'warehouse_id'           => 'Warehouse',
+    'ordered'                => 'Ordered',
+    'in_transit'             => 'In transit',
+    'on_sale'                => 'On sale',
+    'reserved'               => 'Reserved',
+    'ready_for_shipment'     => 'Ready for shipment',
+    'total'                  => 'Total',
+    'pre_ordered'            => 'Pre ordered',
+    'view_content'           => 'View content',
+    'stock_good_info'        => 'Stock good info',
+    'available_to_pre_order' => 'Available to pre order',
+
+    'time'       => 'Time',
+    'total_sold' => 'Total sold',
 
     'errors' => [
         'cant_reserve'                   => 'Can\'t reserve items. Available "on sale" items count is zero.',

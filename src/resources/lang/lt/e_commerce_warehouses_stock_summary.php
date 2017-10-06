@@ -1,15 +1,21 @@
 <?php
 return [
-    'page_title'         => 'Sandėlio valdymas',
-    'good_id'            => 'Prekė',
-    'warehouse_id'       => 'Sandėlys',
-    'ordered'            => 'Užsakyta',
-    'in_transit'         => 'Transportuojama',
-    'on_sale'            => 'Pardavime',
-    'reserved'           => 'Rezervuota',
-    'ready_for_shipment' => 'Paruošta siuntimui',
-    'total'              => 'Iš viso',
-    'pre_ordered'        => 'Nupirkta į minusą',
+    'page_title'             => 'Sandėlio valdymas',
+    'good_id'                => 'Prekė',
+    'warehouse_id'           => 'Sandėlys',
+    'ordered'                => 'Užsakyta',
+    'in_transit'             => 'Transportuojama',
+    'on_sale'                => 'Pardavime',
+    'reserved'               => 'Rezervuota',
+    'ready_for_shipment'     => 'Paruošta siuntimui',
+    'total'                  => 'Iš viso',
+    'pre_ordered'            => 'Nupirkta į minusą',
+    'view_content'           => 'Informacija',
+    'stock_good_info'        => 'Sandėlio prekės informacija',
+    'available_to_pre_order' => 'Galima pirkti į minusą',
+
+    'time'       => 'Laikas',
+    'total_sold' => 'Viso parduota',
 
     'errors' => [
         'cant_reserve'                   => 'Nepakankamas prekių likutis sandėlyje.',
