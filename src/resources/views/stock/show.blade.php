@@ -84,7 +84,7 @@
                     <!-- small box -->
                     <div class="small-box bg-gray">
                         <div class="inner">
-                            <h3>{{ $config['summary']->pre_ordered }}</h3>
+                            <h3>{{ $config['summary']->pre_ordered or '0' }}</h3>
 
                             <p>{{ trans('HCECommerceWarehouse::e_commerce_warehouses_stock_summary.pre_ordered') }}</p>
                         </div>
@@ -132,7 +132,7 @@
                                 <tr>
                                     <td style="width: 140px;vertical-align: middle;">{{ $history->created_at }}</td>
                                     <td>
-                                        {{ $history->user->email }}
+                                        {{ $history->user->email or '-' }}
                                     </td>
                                     <td>
                                         {{ $history->amount }}
