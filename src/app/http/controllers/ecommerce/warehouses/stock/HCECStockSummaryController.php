@@ -316,6 +316,7 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['combination_id'],
                 $data['history']['amount'],
                 $data['record']['warehouse_id'],
+                $data['history']['prime_cost'],
                 $data['history']['comment']
             );
 
@@ -325,6 +326,7 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['combination_id'],
                 $data['history']['amount'],
                 $data['record']['warehouse_id'],
+                $data['history']['prime_cost'],
                 $data['history']['comment']
             );
 
@@ -335,6 +337,7 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['combination_id'],
                 $data['history']['amount'],
                 $data['record']['warehouse_id'],
+                $data['history']['prime_cost'],
                 $data['history']['comment']
             );
 
@@ -345,6 +348,7 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['combination_id'],
                 $data['history']['amount'],
                 $data['record']['warehouse_id'],
+                $data['history']['prime_cost'],
                 $data['history']['comment']
             );
 
@@ -355,6 +359,7 @@ class HCECStockSummaryController extends HCBaseController
                 $data['record']['combination_id'],
                 $data['history']['amount'],
                 $data['record']['warehouse_id'],
+                $data['history']['prime_cost'],
                 $data['history']['comment']
             );
         }

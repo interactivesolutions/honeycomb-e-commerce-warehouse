@@ -15,10 +15,11 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param null $warehouseId
+     * @param $primeCost
      * @param null $comment
      * @throws \Exception
      */
-    public function reserve($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    public function reserve($goodId, $combinationId, $amount, $warehouseId, $primeCost, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -38,7 +39,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('reserved', $stock, $amount, $comment);
+        $this->logHistory('reserved', $stock, $amount, $primeCost, $comment);
     }
 
     /**
@@ -46,9 +47,10 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param $primeCost
      * @param null $comment
      */
-    public function replenishmentReserve($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    public function replenishmentReserve($goodId, $combinationId, $amount, $warehouseId, $primeCost, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -72,7 +74,7 @@ class HCStockService
         }
 
         // log history
-        $this->logHistory('warehouse-replenishment-reserve', $stock, $amount, $comment);
+        $this->logHistory('warehouse-replenishment-reserve', $stock, $amount, $primeCost, $comment);
     }
 
     /**
@@ -80,9 +82,10 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param $primeCost
      * @param null $comment
      */
-    public function replenishmentForSale($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    public function replenishmentForSale($goodId, $combinationId, $amount, $warehouseId, $primeCost, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -105,7 +108,7 @@ class HCStockService
         }
 
         // log history
-        $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $comment);
+        $this->logHistory('warehouse-replenishment-for-sale', $stock, $amount, $primeCost, $comment);
 
         // handle pre ordered
         $this->handlePreOrdered($stock, $comment);
@@ -116,10 +119,11 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param $primeCost
      * @param null $comment
      * @throws \Exception
      */
-    public function removeOnSale($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    public function removeOnSale($goodId, $combinationId, $amount, $warehouseId, $primeCost, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -136,7 +140,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('warehouse-remove-from-sale', $stock, $amount, $comment);
+        $this->logHistory('warehouse-remove-from-sale', $stock, $amount, $primeCost, $comment);
     }
 
     /**
@@ -144,10 +148,11 @@ class HCStockService
      * @param $combinationId
      * @param $amount
      * @param $warehouseId
+     * @param $primeCost
      * @param null $comment
      * @throws \Exception
      */
-    public function removeReserved($goodId, $combinationId, $amount, $warehouseId, $comment = null)
+    public function removeReserved($goodId, $combinationId, $amount, $warehouseId, $primeCost, $comment = null)
     {
         $stock = $this->getStockSummary($goodId, $combinationId, $warehouseId);
 
@@ -164,7 +169,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('warehouse-remove-from-reserved', $stock, $amount, $comment);
+        $this->logHistory('warehouse-remove-from-reserved', $stock, $amount, $primeCost, $comment);
     }
 
     /**
@@ -192,7 +197,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('warehouse-cancel-reserved', $stock, $amount, $comment);
+        $this->logHistory('warehouse-cancel-reserved', $stock, $amount, null, $comment);
 
         // handle pre ordered
         $this->handlePreOrdered($stock, $comment);
@@ -222,7 +227,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('warehouse-cancel-pre-ordered', $stock, $amount, $comment);
+        $this->logHistory('warehouse-cancel-pre-ordered', $stock, $amount, null, $comment);
     }
 
     /**
@@ -250,7 +255,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('warehouse-remove-ready-for-shipment', $stock, $amount, $comment);
+        $this->logHistory('warehouse-remove-ready-for-shipment', $stock, $amount, null, $comment);
     }
 
     /**
@@ -278,7 +283,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('move-to-ready-for-shipment', $stock, $amount, $comment);
+        $this->logHistory('move-to-ready-for-shipment', $stock, $amount, null, $comment);
     }
 
     /**
@@ -306,7 +311,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('cancel-ready-for-shipment', $stock, $amount, $comment);
+        $this->logHistory('cancel-ready-for-shipment', $stock, $amount, null, $comment);
 
         // handle pre ordered
         $this->handlePreOrdered($stock, $comment);
@@ -334,9 +339,10 @@ class HCStockService
      * @param $actionId
      * @param $stock
      * @param $amount
+     * @param $primeCost
      * @param $comment
      */
-    protected function logHistory($actionId, $stock, $amount, $comment)
+    protected function logHistory($actionId, $stock, $amount, $primeCost = null, $comment = null)
     {
         HCECStockHistory::create([
             'good_id'        => $stock->good_id,
@@ -345,6 +351,7 @@ class HCStockService
             'action_id'      => $actionId,
             'user_id'        => auth()->check() ? auth()->id() : null,
             'amount'         => $amount,
+            'prime_cost'     => $primeCost,
             'comment'        => $comment,
         ]);
     }
@@ -363,7 +370,7 @@ class HCStockService
         $stock->save();
 
         // log history
-        $this->logHistory('remove-pre-ordered', $stock, $amount, $comment);
+        $this->logHistory('remove-pre-ordered', $stock, $amount, null, $comment);
 
         return $stock;
     }

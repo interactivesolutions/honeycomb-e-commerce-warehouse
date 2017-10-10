@@ -141,7 +141,7 @@
                                         {{ $history->action->title }}
                                     </td>
                                     <td>
-                                        {{ $history->price_cost }}
+                                        {{ $history->prime_cost }}
                                     </td>
                                     <td>
                                         {{ $history->comment }}
